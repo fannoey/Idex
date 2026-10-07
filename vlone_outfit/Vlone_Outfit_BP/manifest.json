@@ -1,0 +1,39 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "VLONE Outfit (BP)",
+    "description": "Hoodie (hood up / down) + chain cargo pants",
+    "uuid": "e95b9318-a54d-53fc-9ce9-b263a8cac3a4",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      40
+    ]
+  },
+  "modules": [
+    {
+      "type": "data",
+      "uuid": "d562ac44-5142-5824-98dc-b61cb26713c6",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "50351dad-31a2-5a9e-8cd0-b68c2e30a21d",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}

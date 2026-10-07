@@ -1,0 +1,27 @@
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "idex:vlone_cargo_pants"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      "WCW",
+      "W W",
+      "W W"
+    ],
+    "key": {
+      "W": {
+        "item": "minecraft:black_wool"
+      },
+      "C": {
+        "item": "minecraft:chain"
+      }
+    },
+    "result": {
+      "item": "idex:vlone_cargo_pants"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "resource_pack_name": "vlone_outfit",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "idex_vlone_hoodie": {
+      "textures": "textures/items/vlone_hoodie"
+    },
+    "idex_vlone_hoodie_up": {
+      "textures": "textures/items/vlone_hoodie_up"
+    },
+    "idex_vlone_cargo_pants": {
+      "textures": "textures/items/vlone_cargo_pants"
+    }
+  }
+}

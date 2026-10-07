@@ -1,0 +1,29 @@
+{
+  "format_version": "1.21.40",
+  "minecraft:item": {
+    "description": {
+      "identifier": "idex:vlone_cargo_pants",
+      "menu_category": {
+        "category": "equipment"
+      }
+    },
+    "components": {
+      "minecraft:icon": "idex_vlone_cargo_pants",
+      "minecraft:display_name": {
+        "value": "Chain Cargo Pants"
+      },
+      "minecraft:max_stack_size": 1,
+      "minecraft:wearable": {
+        "slot": "slot.armor.legs",
+        "protection": 2
+      },
+      "minecraft:durability": {
+        "max_durability": 225
+      },
+      "minecraft:enchantable": {
+        "slot": "armor_legs",
+        "value": 15
+      }
+    }
+  }
+}

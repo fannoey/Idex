@@ -1,0 +1,27 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:attachable": {
+    "description": {
+      "identifier": "idex:vlone_cargo_pants",
+      "materials": {
+        "default": "entity_alphatest",
+        "enchanted": "entity_alphatest_glint"
+      },
+      "textures": {
+        "default": "textures/models/armor/vlone_cargo_pants",
+        "enchanted": "textures/misc/enchanted_item_glint"
+      },
+      "geometry": {
+        "default": "geometry.idex.vlone_cargo_pants"
+      },
+      "scripts": {
+        "parent_setup": "variable.leg_layer_visible = 0.0;"
+      },
+      "render_controllers": [
+        {
+          "controller.render.armor": "c.item_slot != 'main_hand' && c.item_slot != 'off_hand'"
+        }
+      ]
+    }
+  }
+}

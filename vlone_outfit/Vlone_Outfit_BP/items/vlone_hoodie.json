@@ -1,0 +1,29 @@
+{
+  "format_version": "1.21.40",
+  "minecraft:item": {
+    "description": {
+      "identifier": "idex:vlone_hoodie",
+      "menu_category": {
+        "category": "equipment"
+      }
+    },
+    "components": {
+      "minecraft:icon": "idex_vlone_hoodie",
+      "minecraft:display_name": {
+        "value": "VLONE Hoodie"
+      },
+      "minecraft:max_stack_size": 1,
+      "minecraft:wearable": {
+        "slot": "slot.armor.chest",
+        "protection": 3
+      },
+      "minecraft:durability": {
+        "max_durability": 240
+      },
+      "minecraft:enchantable": {
+        "slot": "armor_torso",
+        "value": 15
+      }
+    }
+  }
+}
