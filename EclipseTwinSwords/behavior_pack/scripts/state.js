@@ -16,6 +16,9 @@
  * @property {boolean} slashFlip      alternate Solar Slash tilt
  * @property {boolean} crescentFlip   alternate Void Crescent tilt
  * @property {string} held            weapon held last tick ("solaris" | "noctis" | "")
+ * @property {{solaris?: number, noctis?: number}} selected  skill-wheel index per blade
+ * @property {number} combo           melee hit counter (attack animation variety)
+ * @property {number} comboAt         tick of the last melee hit
  */
 
 /** @type {Map<string, PlayerState>} */
@@ -28,7 +31,7 @@ export function getState(player) {
     s = {
       castLockUntil: 0, crownUntil: 0, eclipseUntil: 0, stance: "", hud: "", hudSentAt: 0,
       notice: "", noticeUntil: 0, lastGainAt: 0, wasReady: false, loreChecked: "",
-      slashFlip: false, crescentFlip: false, held: "",
+      slashFlip: false, crescentFlip: false, held: "", selected: {}, combo: 0, comboAt: 0,
     };
     states.set(player.id, s);
   }

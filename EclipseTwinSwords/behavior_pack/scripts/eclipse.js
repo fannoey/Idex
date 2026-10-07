@@ -306,7 +306,7 @@ export function tickPlayer(player, now) {
     const chest = add(player.location, v3(0, 1.2, 0));
     fx(dim, "eclipse_ready", chest, { density: 1.2 });
     sound(dim, "eclipse.ready", chest, 0.9);
-    st.notice = "§l§6ECLIPSE §dREADY";
+    st.notice = "§l§6ECLIPSE §dREADY§r §7- Sneak to select";
     st.noticeUntil = now + 50;
   } else if (e.total < ENERGY.MAX) {
     st.wasReady = false;

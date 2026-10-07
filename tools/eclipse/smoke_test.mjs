@@ -43,6 +43,8 @@ export class MolangVariableMap {
 export const EquipmentSlot = { Mainhand: "Mainhand", Offhand: "Offhand" };
 export const GameMode = { Creative: "Creative", Spectator: "Spectator", Survival: "Survival", Adventure: "Adventure" };
 export const EntityDamageCause = { entityAttack: "entityAttack" };
+export const InputButton = { Jump: "Jump", Sneak: "Sneak" };
+export const ButtonState = { Pressed: "Pressed", Released: "Released" };
 const objectives = new Map();
 class Objective { constructor(id) { this.id = id; this.scores = new Map(); }
   getScore(p) { return this.scores.get(p.id); } setScore(p, v) { this.scores.set(p.id, v); } }
@@ -99,7 +101,7 @@ export const dimension = {
 };
 export function spawn(e) { entities.push(e); return e; }
 export const world = {
-  afterEvents: { itemUse: sig(), entityHitEntity: sig(), worldLoad: sig(), playerSpawn: sig(), playerDimensionChange: sig(), entityDie: sig(), playerLeave: sig() },
+  afterEvents: { itemUse: sig(), entityHitEntity: sig(), playerButtonInput: sig(), worldLoad: sig(), playerSpawn: sig(), playerDimensionChange: sig(), entityDie: sig(), playerLeave: sig() },
   scoreboard: { getObjective(id) { return objectives.get(id); }, addObjective(id) { const o = new Objective(id); objectives.set(id, o); return o; } },
   gameRules: { pvp: true },
   getAllPlayers() { return entities.filter((e) => e instanceof Player && e.isValid); },
@@ -134,26 +136,35 @@ world.afterEvents.playerSpawn.fire({ player: p, initialSpawn: true });
 const zombies = [6, 9, 12, 15].map((z) => spawn(new Entity("minecraft:zombie", { x: 0, y: 64, z })));
 const objective = (id) => world.scoreboard.getObjective(id);
 const use = () => world.afterEvents.itemUse.fire({ source: p, itemStack: p.mainhand });
+const sneak = () => { world.afterEvents.playerButtonInput.fire({ player: p, button: "Sneak", newButtonState: "Pressed" }); advance(1); };
+const selectedName = () => ((log.actionbar.at(-1) ?? "").split("\n").find((l) => l.includes(" §8| ")) ?? "").split(" §8| ").find((x) => x.includes("▶")) ?? "";
 const dmgOf = (e) => log.damage.filter((d) => d.id === e.id).reduce((s, d) => s + d.a, 0);
 
 console.log("SOLARIS");
 p.mainhand = new ItemStack("eclipse:solaris");
-advance(2);
+advance(4);
 check(p.mainhand.getLore().length > 0, "lore written on first hold");
-check(log.anims.some((a) => a.name === "animation.eclipse.idle_solaris"), "dual-blade stance applied");
+for (const n of ["idle_solaris", "walk", "run", "attack"]) check(log.anims.some((a) => a.name === "animation.eclipse." + n), `layer ${n} applied`);
+check(selectedName().includes("Slash"), "Solar Slash selected by default");
 use(); advance(30);
 const hitZ = zombies.filter((z) => dmgOf(z) > 0).length;
-check(hitZ === 3, `Solar Slash pierces 2 and stops at the 3rd target (hit ${hitZ})`);
+check(hitZ === 3, `Use casts Solar Slash, pierces 2 and stops at the 3rd target (hit ${hitZ})`);
 check(objective("eclipse_solar")?.getScore(p) >= 6, "Solar energy gained");
-use(); advance(1);
-check(log.actionbar.at(-1)?.includes("Slash"), "HUD shows Solaris cooldowns");
-advance(40);
-p.isSneaking = true; p.rot = { x: 30, y: 0 }; use(); advance(30); p.isSneaking = false; p.rot = { x: 0, y: 0 };
-check(log.particles.some((x) => x.name === "eclipse:solar_spear_fall"), "Radiant Spear falls");
+sneak(); advance(4);
+check(selectedName().includes("Spear"), "Sneak cycles to Radiant Spear");
+check(log.anims.some((a) => a.name === "animation.eclipse.skill_select"), "skill switch flourish");
+check(log.sounds.some((s) => s.id === "eclipse.select"), "skill switch sound");
+p.rot = { x: 30, y: 0 }; use(); advance(30); p.rot = { x: 0, y: 0 };
+check(log.particles.some((x) => x.name === "eclipse:solar_spear_fall"), "Use casts Radiant Spear");
 check(log.knock.length > 0, "Radiant Spear knocks back");
-p.isOnGround = false; use(); advance(20); p.isOnGround = true;
+sneak(); use(); advance(20);
 check(log.effects.some((e) => e.id === p.id && e.t === "speed"), "Solar Crown grants speed");
 check(log.particles.filter((x) => x.name === "eclipse:solar_crown_halo").length >= 5, "Solar Crown halo follows the player");
+sneak(); advance(4);
+check(selectedName().includes("Slash"), "wheel wraps back to Solar Slash (no Eclipse slots without energy)");
+const hurtZ = zombies[3];
+for (let i = 0; i < 3; i++) { world.afterEvents.entityHitEntity.fire({ damagingEntity: p, hitEntity: hurtZ }); advance(2); }
+check(log.anims.some((a) => a.name === "animation.eclipse.attack_left") && log.anims.some((a) => a.name === "animation.eclipse.attack_cross"), "melee hits alternate blades");
 
 console.log("NOCTIS");
 p.mainhand = new ItemStack("eclipse:noctis");
@@ -162,10 +173,10 @@ check(log.anims.some((a) => a.name === "animation.eclipse.idle_noctis"), "stance
 const knockBefore = log.knock.length;
 use(); advance(30);
 check(log.knock.length > knockBefore, "Void Crescent pulls targets");
-p.isSneaking = true; p.rot = { x: 40, y: 0 }; use(); p.isSneaking = false; p.rot = { x: 0, y: 0 };
+sneak(); p.rot = { x: 40, y: 0 }; use(); p.rot = { x: 0, y: 0 };
 const fieldStart = log.damage.length; advance(130);
 check(log.damage.length - fieldStart >= 6, `Abyss Field pulses damage (${log.damage.length - fieldStart} hits)`);
-p.isOnGround = false; p.rot = { x: 30, y: 0 }; use(); advance(40); p.isOnGround = true; p.rot = { x: 0, y: 0 };
+sneak(); p.rot = { x: 30, y: 0 }; use(); advance(40); p.rot = { x: 0, y: 0 };
 check(log.particles.some((x) => x.name === "eclipse:void_moon"), "Moonfall summons the black moon");
 check(objective("eclipse_void")?.getScore(p) > 0, "Void energy gained");
 
@@ -173,19 +184,24 @@ console.log("ECLIPSE");
 objective("eclipse_solar").setScore(p, 50); objective("eclipse_void").setScore(p, 50);
 advance(8);
 check(log.sounds.some((s) => s.id === "eclipse.ready"), "ECLIPSE READY notification");
-p.rot = { x: -70, y: 0 }; use(); advance(30);
-check(p.tags.has("eclipse_state"), "Eclipse State active (look up + use)");
+sneak(); advance(4);
+check(selectedName().includes("ECLIPSE"), "Eclipse State joins the wheel at 100 energy");
+use(); advance(30);
+check(p.tags.has("eclipse_state"), "Eclipse State active");
 check(log.particles.some((x) => x.name === "eclipse:eclipse_halo"), "Eclipse halo aura");
 check(log.anims.some((a) => a.name === "animation.eclipse.eclipse_idle"), "Eclipse stance");
-p.isSneaking = true; use(); p.isSneaking = false;
+let guard = 0;
+while (!selectedName().includes("ABYSS ULT") && guard++ < 6) { sneak(); advance(4); }
+check(selectedName().includes("ABYSS ULT"), "Heaven's Abyss selectable during Eclipse State");
+use();
 const ultDmg = log.damage.length; advance(100);
 check(!p.tags.has("eclipse_state"), "ultimate consumes the Eclipse State");
 check(log.commands.some((c) => c.startsWith("fog @s push eclipse:black_eclipse")), "Black Eclipse fog pushed");
 check(log.commands.some((c) => c.startsWith("fog @s remove eclipse_ult")), "fog removed afterwards");
 check(log.damage.length > ultDmg, "Heaven's Abyss deals area damage");
 check(log.fades.length >= 2, "camera flashes");
-p.rot = { x: -70, y: 0 }; use(); advance(2);
-check(!p.tags.has("eclipse_state"), "no Eclipse State without energy");
+advance(4);
+check(selectedName().includes("Crescent"), "selection falls back to the first skill after the ultimate");
 
 console.log("REFERENCES");
 const usedP = new Set(log.particles.map((x) => x.name));

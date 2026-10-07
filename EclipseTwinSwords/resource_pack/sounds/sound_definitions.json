@@ -216,6 +216,18 @@
           "load_on_low_memory": true
         }
       ]
+    },
+    "eclipse.select": {
+      "category": "player",
+      "min_distance": 4.0,
+      "max_distance": 8.0,
+      "sounds": [
+        {
+          "name": "sounds/eclipse/eclipse_select",
+          "volume": 0.5,
+          "load_on_low_memory": true
+        }
+      ]
     }
   }
 }

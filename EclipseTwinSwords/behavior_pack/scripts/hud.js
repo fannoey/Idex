@@ -1,13 +1,21 @@
-// Actionbar HUD: skill cooldowns of the held blade + ECLIPSE ENERGY bar.
+// Actionbar HUD: the skill wheel of the held blade (selected skill marked),
+// cooldowns and the ECLIPSE ENERGY bar.
 //
-//   Slash READY | Spear 4.2s | Crown READY
+//   ▶Slash READY  Spear 4.2s  Crown READY
 //   SOL █████ VOID ███░░  80%
-//   ECLIPSE READY  (Look up + Use)
+//   ECLIPSE READY  (Sneak to select)
 import { system } from "@minecraft/server";
 import * as Cooldown from "./cooldown.js";
 import { ENERGY, HUD, SKILL } from "./config.js";
 import { getEnergy } from "./eclipse.js";
+import * as Skills from "./skills.js";
 import { getState } from "./state.js";
+
+const SHORT = {
+  [SKILL.SOLAR_SLASH.id]: "Slash", [SKILL.RADIANT_SPEAR.id]: "Spear", [SKILL.SOLAR_CROWN.id]: "Crown",
+  [SKILL.VOID_CRESCENT.id]: "Crescent", [SKILL.ABYSS_FIELD.id]: "Abyss", [SKILL.MOONFALL.id]: "Moon",
+  [SKILL.ECLIPSE_STATE.id]: "ECLIPSE", [SKILL.HEAVENS_ABYSS.id]: "ABYSS ULT",
+};
 
 /** @param {import("@minecraft/server").Player} player @param {string} id */
 function cd(player, id) {
@@ -29,26 +37,29 @@ function bar(value, max, cells, on) {
 function compose(player, held, now) {
   const st = getState(player);
   const lines = [];
-  if (held === "solaris") {
-    const crown = st.crownUntil > now
-      ? `§eON ${Cooldown.seconds(st.crownUntil - now)}`
-      : cd(player, SKILL.SOLAR_CROWN.id);
-    lines.push(`§6Slash ${cd(player, SKILL.SOLAR_SLASH.id)} §8| §6Spear ${cd(player, SKILL.RADIANT_SPEAR.id)} §8| §6Crown ${crown}`);
-  } else if (held === "noctis") {
-    lines.push(`§dCrescent ${cd(player, SKILL.VOID_CRESCENT.id)} §8| §dAbyss ${cd(player, SKILL.ABYSS_FIELD.id)} §8| §dMoon ${cd(player, SKILL.MOONFALL.id)}`);
+  if (held) {
+    const { list, index } = Skills.selected(player, held);
+    const parts = list.map((slot, i) => {
+      let status = cd(player, slot.id);
+      if (slot.id === SKILL.SOLAR_CROWN.id && st.crownUntil > now) status = `§eON ${Cooldown.seconds(st.crownUntil - now)}`;
+      if (slot.id === SKILL.ECLIPSE_STATE.id || slot.id === SKILL.HEAVENS_ABYSS.id) status = "";
+      const label = SHORT[slot.id] ?? slot.name;
+      return i === index ? `§e▶${slot.color}§l${label}§r ${status}` : `§7${label} ${status}`;
+    });
+    lines.push(parts.join(" §8| "));
   }
 
   const ult = Cooldown.remaining(player, SKILL.HEAVENS_ABYSS.id);
   if (st.eclipseUntil > now) {
     const left = st.eclipseUntil - now;
     lines.push(`§l§6ECLIPSE §dSTATE§r ${bar(left, SKILL.ECLIPSE_STATE.duration, 10, "§e")} §f${Cooldown.seconds(left)}`);
-    lines.push(ult <= 0 ? "§dHeaven's Abyss §aREADY §7(Look up + Sneak + Use)" : `§7Heaven's Abyss ${Cooldown.seconds(ult)}`);
+    lines.push(ult <= 0 ? "§dHeaven's Abyss §aREADY §7(Sneak to select)" : `§7Heaven's Abyss ${Cooldown.seconds(ult)}`);
   } else {
     const e = getEnergy(player);
     const pct = Math.round((e.total / ENERGY.MAX) * 100);
     lines.push(`§6SOL ${bar(e.solar, ENERGY.MAX_SIDE, 5, "§e")} §5VOID ${bar(e.void, ENERGY.MAX_SIDE, 5, "§d")} §f${pct}%`);
     if (e.total >= ENERGY.MAX) {
-      lines.push(ult <= 0 ? "§l§6ECLIPSE §dREADY§r §7Look up + Use" : `§l§6ECLIPSE §dREADY§r §7Ult ${Cooldown.seconds(ult)}`);
+      lines.push(ult <= 0 ? "§l§6ECLIPSE §dREADY§r §7Sneak to select" : `§l§6ECLIPSE §dREADY§r §7Ult ${Cooldown.seconds(ult)}`);
     } else if (ult > 0) {
       lines.push(`§7Heaven's Abyss ${Cooldown.seconds(ult)}`);
     }

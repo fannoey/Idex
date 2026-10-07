@@ -1,8 +1,10 @@
 """Animations for ECLIPSE TWIN SWORDS.
 
-Player animations (played from the script with Entity.playAnimation on the
-"eclipse.stance" / "eclipse.cast" controllers):
-    idle_solaris, idle_noctis, eclipse_idle         (looping stances)
+Player animations (played from the script with Entity.playAnimation):
+    idle_solaris, idle_noctis, eclipse_idle         holding stance (standing)
+    walk, run, attack                               locomotion / basic swing layers
+    attack_left, attack_cross                       2nd / 3rd melee hit (blades alternate)
+    skill_select                                    flourish when Sneak changes skill
     solar_cast, radiant_spear, solar_crown,
     void_crescent, abyss_field, moonfall,
     eclipse_activate, eclipse_ultimate              (one-shot casts)
@@ -15,6 +17,11 @@ fade out in first person so the camera view stays clean.
 from common import NS
 
 FP_OFF = "variable.is_first_person ? 0.0 : 1.0"
+# movement blend (0 standing -> 1 walking), sprint and "can locomote" gates
+MOVE = "math.clamp(q.modified_move_speed * 1.6, 0.0, 1.0)"
+GROUND = "(1.0 - q.is_riding) * (1.0 - q.is_swimming) * (1.0 - q.is_gliding)"
+STEP = "q.modified_distance_moved * 38.17"     # same phase as the vanilla leg swing
+ATK = "math.sin(variable.attack_time * 180.0)"  # vanilla swing progress 0..1 -> 0..1..0
 
 
 def kf(points, smooth=True):
@@ -26,8 +33,8 @@ def kf(points, smooth=True):
     return out
 
 
-def anim(length, bones, loop=False):
-    a = {"animation_length": length, "blend_weight": FP_OFF, "bones": {}}
+def anim(length, bones, loop=False, weight=None):
+    a = {"animation_length": length, "blend_weight": f"({FP_OFF}) * ({weight})" if weight else FP_OFF, "bones": {}}
     if loop:
         a["loop"] = True
     for bone, channels in bones.items():
@@ -40,24 +47,67 @@ Z = [0, 0, 0]
 
 def player_animations():
     A = {}
+    IDLE = f"1.0 - {MOVE} * {GROUND}"
     breathe = "math.sin(q.anim_time * 180)"
     # ---------------------------------------------------------------- stances
     A["idle_solaris"] = anim(2.0, {
         "rightArm": {"rotation": [f"-14 + 2.5 * {breathe}", 10, 9]},
         "leftArm": {"rotation": [f"-9 + 2 * math.sin(q.anim_time * 180 + 90)", -12, -11]},
         "body": {"rotation": [0, f"-4 + 1.5 * {breathe}", 0]},
-    }, loop=True)
+    }, loop=True, weight=IDLE)
     A["idle_noctis"] = anim(2.0, {
         "rightArm": {"rotation": [f"-11 + 2.5 * {breathe}", 14, 13]},
         "leftArm": {"rotation": [f"-15 + 2 * math.sin(q.anim_time * 180 + 90)", -8, -8]},
         "body": {"rotation": [0, f"4 - 1.5 * {breathe}", 0]},
-    }, loop=True)
+    }, loop=True, weight=IDLE)
     A["eclipse_idle"] = anim(2.4, {
         "rightArm": {"rotation": [f"-22 + 3 * math.sin(q.anim_time * 150)", 16, 24]},
         "leftArm": {"rotation": [f"-22 + 3 * math.sin(q.anim_time * 150 + 120)", -16, -24]},
         "body": {"rotation": [f"-3 + 1.2 * math.sin(q.anim_time * 150)", 0, 0]},
         "head": {"rotation": [-4, 0, 0]},
+    }, loop=True, weight=IDLE)
+
+    # ------------------------------------------------- locomotion / attack
+    # Played on their own controllers next to the stance; each one fades in
+    # through its blend_weight, so standing / walking / sprinting / swinging
+    # blend smoothly without a player.entity.json override.
+    A["walk"] = anim(1.0, {
+        # cancel most of the vanilla arm swing (variable.tcos0) and carry both blades low and ready
+        "rightArm": {"rotation": [f"variable.tcos0 * 0.85 - 16 + 7 * math.cos({STEP})", 8, 12]},
+        "leftArm": {"rotation": [f"-variable.tcos0 * 0.85 - 13 - 7 * math.cos({STEP})", -8, -12]},
+        "body": {"rotation": [4, f"5 * math.sin({STEP} * 0.5)", 0]},
+        "head": {"rotation": [-3, 0, 0]},
+    }, loop=True, weight=f"{MOVE} * (1.0 - q.is_sprinting) * {GROUND}")
+    A["run"] = anim(1.0, {
+        # sprint: lean in, both blades swept back and trailing (anime dash run)
+        "rightArm": {"rotation": [f"variable.tcos0 + 52 + 5 * math.cos({STEP})", 12, 24]},
+        "leftArm": {"rotation": [f"-variable.tcos0 + 52 - 5 * math.cos({STEP})", -12, -24]},
+        "body": {"rotation": [16, f"4 * math.sin({STEP} * 0.5)", 0]},
+        "head": {"rotation": [-15, 0, 0]},
+        "root": {"position": [0, f"-0.4 + 0.4 * math.abs(math.sin({STEP} * 0.5))", 0]},
+    }, loop=True, weight=f"{MOVE} * q.is_sprinting * {GROUND}")
+    A["attack"] = anim(1.0, {
+        # reshapes the vanilla swing into a wide diagonal blade slash
+        "rightArm": {"rotation": [f"-70 * {ATK}", f"40 * {ATK} - 55 * math.sin(variable.attack_time * 90.0)", f"22 * {ATK}"]},
+        "leftArm": {"rotation": [f"-18 * {ATK}", 0, f"-20 * {ATK}"]},
+        "body": {"rotation": [f"6 * {ATK}", f"-24 * {ATK}", 0]},
     }, loop=True)
+    A["attack_left"] = anim(0.45, {
+        "leftArm": {"rotation": {0.0: Z, 0.07: [-118, -40, -34], 0.16: [-82, 56, -10], 0.28: [-72, 50, -6], 0.45: Z}},
+        "rightArm": {"rotation": {0.0: Z, 0.12: [-16, 0, 24], 0.45: Z}},
+        "body": {"rotation": {0.0: Z, 0.07: [0, -16, 0], 0.16: [3, 22, 0], 0.28: [2, 18, 0], 0.45: Z}},
+    })
+    A["attack_cross"] = anim(0.5, {
+        "rightArm": {"rotation": {0.0: Z, 0.08: [-150, -10, 30], 0.18: [-70, -40, -14], 0.32: [-64, -36, -12], 0.5: Z}},
+        "leftArm": {"rotation": {0.0: Z, 0.08: [-150, 10, -30], 0.18: [-70, 40, 14], 0.32: [-64, 36, 12], 0.5: Z}},
+        "body": {"rotation": {0.0: Z, 0.08: [-8, 0, 0], 0.18: [14, 0, 0], 0.32: [12, 0, 0], 0.5: Z}},
+        "root": {"position": {0.0: Z, 0.18: [0, -0.8, 0], 0.5: Z}},
+    })
+    A["skill_select"] = anim(0.35, {
+        # quick wrist flourish of both blades when the skill changes
+        "rightArm": {"rotation": {0.0: Z, 0.1: [-34, 0, 20], 0.2: [-30, 0, 16], 0.35: Z}},
+        "leftArm": {"rotation": {0.0: Z, 0.1: [-34, 0, -20], 0.2: [-30, 0, -16], 0.35: Z}},
+    })
 
     # ---------------------------------------------------------- SOLARIS casts
     A["solar_cast"] = anim(0.55, {
@@ -176,5 +226,6 @@ def attachable_controller():
     }
 
 
-PLAYER_ANIMS = ["idle_solaris", "idle_noctis", "eclipse_idle", "solar_cast", "radiant_spear", "solar_crown",
+PLAYER_ANIMS = ["idle_solaris", "idle_noctis", "eclipse_idle", "walk", "run", "attack", "attack_left", "attack_cross",
+                "skill_select", "solar_cast", "radiant_spear", "solar_crown",
                 "void_crescent", "abyss_field", "moonfall", "eclipse_activate", "eclipse_ultimate"]

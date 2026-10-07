@@ -62,10 +62,6 @@ export const ENERGY = {
   DECAY_PER_SECOND: 1,   // per side
 };
 
-export const INPUT = {
-  LOOK_UP_PITCH: -55,    // look this far up (degrees) for the Eclipse gestures
-};
-
 export const COMBAT = {
   MAX_TARGETS: 16,
   PVP_MULTIPLIER: 0.6,   // skill damage vs players (prevents one-shots)

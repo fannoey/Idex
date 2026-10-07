@@ -2,55 +2,47 @@
 // Reads input, finds the held blade, dispatches skills and runs the single
 // per-tick loop (players only - never scans every entity in the world).
 //
-// Controls (mobile friendly, no combos):
-//   SOLARIS  Use .................... Solar Slash
-//            Sneak + Use ............ Radiant Spear
-//            Jump + Use (airborne) .. Solar Crown
-//   NOCTIS   Use .................... Void Crescent
-//            Sneak + Use ............ Abyss Field
-//            Jump + Use (airborne) .. Moonfall
-//   ECLIPSE  Look up + Use .......... Eclipse State      (Eclipse Energy 100)
-//            Look up + Sneak + Use .. Heaven's Abyss     (Energy 100 or during Eclipse State)
-// The look-up gestures only take over when Eclipse is available; otherwise the
-// blade's normal skill fires, so no input is ever dead or ambiguous.
-import { EquipmentSlot, Player, system, world } from "@minecraft/server";
+// Controls (one button each, mobile friendly):
+//   Sneak (press) ........ cycle the selected skill
+//                          SOLARIS: Solar Slash > Radiant Spear > Solar Crown
+//                          NOCTIS:  Void Crescent > Abyss Field > Moonfall
+//                          + ECLIPSE STATE / HEAVEN'S ABYSS when they are available
+//   Use / right click .... cast the selected skill
+import { ButtonState, EquipmentSlot, InputButton, Player, system, world } from "@minecraft/server";
 import * as Cooldown from "./cooldown.js";
-import { ENERGY, HUD, INPUT, ITEM } from "./config.js";
+import { ENERGY, HUD, ITEM } from "./config.js";
 import { bodyCenter } from "./damage.js";
 import * as Eclipse from "./eclipse.js";
 import * as Hud from "./hud.js";
 import * as Noctis from "./noctis.js";
 import { tickProjectiles } from "./projectile.js";
+import * as Skills from "./skills.js";
 import * as Solaris from "./solaris.js";
 import { forgetState, getState, resetStances } from "./state.js";
-import { anim } from "./vfx.js";
+import { anim, sound } from "./vfx.js";
 
 const LORE = {
   solaris: [
     "§r§6The Blade of Dawn",
     "§r§eBearer of the Eternal Sun",
     "",
-    "§r§7Use §8- §6Solar Slash",
-    "§r§7Sneak + Use §8- §6Radiant Spear",
-    "§r§7Jump + Use §8- §6Solar Crown",
-    "§r§7Look up + Use §8- §dEclipse State",
-    "§r§7Look up + Sneak + Use §8- §dHeaven's Abyss",
+    "§r§7Sneak §8- §fchange skill   §7Use §8- §fcast",
+    "§r§6Solar Slash §8> §6Radiant Spear §8> §6Solar Crown",
+    "§r§dEclipse State §8/ §dHeaven's Abyss §7at 100 energy",
   ],
   noctis: [
     "§r§5The Blade of Night",
     "§r§dBearer of the Endless Void",
     "",
-    "§r§7Use §8- §dVoid Crescent",
-    "§r§7Sneak + Use §8- §dAbyss Field",
-    "§r§7Jump + Use §8- §dMoonfall",
-    "§r§7Look up + Use §8- §6Eclipse State",
-    "§r§7Look up + Sneak + Use §8- §6Heaven's Abyss",
+    "§r§7Sneak §8- §fchange skill   §7Use §8- §fcast",
+    "§r§dVoid Crescent §8> §dAbyss Field §8> §dMoonfall",
+    "§r§6Eclipse State §8/ §6Heaven's Abyss §7at 100 energy",
   ],
 };
 
 const TIPS = {
-  solaris: "§6Use§7: Slash  §6Sneak§7: Spear  §6Jump§7: Crown",
-  noctis: "§dUse§7: Crescent  §dSneak§7: Abyss  §dJump§7: Moonfall",
+  solaris: "§6Sneak§7: change skill  §6Use§7: cast",
+  noctis: "§dSneak§7: change skill  §dUse§7: cast",
 };
 
 /** @type {Set<string>} players who already saw the controls tip this session */
@@ -72,37 +64,10 @@ function heldWeapon(player) {
   }
 }
 
-/** Jumping / falling (not flying, gliding, swimming, climbing or riding). @param {Player} player */
-function isAirborne(player) {
-  try {
-    if (player.isFlying || player.isGliding || player.isInWater || player.isClimbing) return false;
-    if (player.getComponent("minecraft:riding")) return false;
-    return player.isJumping || !player.isOnGround;
-  } catch {
-    return false;
-  }
-}
-
 /** @param {Player} player @param {"solaris"|"noctis"} weapon */
 function handleUse(player, weapon) {
-  const st = getState(player);
-  if (system.currentTick < st.castLockUntil) return;
-  const sneaking = player.isSneaking;
-
-  if (player.getRotation().x <= INPUT.LOOK_UP_PITCH) {
-    if (sneaking && Eclipse.canUltimate(player)) return Eclipse.ultimate(player);
-    if (!sneaking && Eclipse.canActivate(player)) return Eclipse.activate(player);
-  }
-
-  if (weapon === "solaris") {
-    if (sneaking) Solaris.radiantSpear(player);
-    else if (isAirborne(player)) Solaris.solarCrown(player);
-    else Solaris.solarSlash(player);
-  } else {
-    if (sneaking) Noctis.abyssField(player);
-    else if (isAirborne(player)) Noctis.moonfall(player);
-    else Noctis.voidCrescent(player);
-  }
+  if (system.currentTick < getState(player).castLockUntil) return;
+  Skills.castSelected(player, weapon);
 }
 
 world.afterEvents.itemUse.subscribe((ev) => {
@@ -115,12 +80,33 @@ world.afterEvents.itemUse.subscribe((ev) => {
   }
 });
 
+// Sneak press -> next skill (works for hold-to-sneak and toggle-sneak alike:
+// every press of the button is one step).
+world.afterEvents.playerButtonInput.subscribe((ev) => {
+  const held = heldWeapon(ev.player);
+  if (!held) return;
+  try {
+    Skills.cycle(ev.player, held);
+    anim(ev.player, "skill_select", "eclipse.select", undefined, 0.1);
+    sound(ev.player.dimension, "eclipse.select", ev.player.getHeadLocation(), 0.6, held === "solaris" ? 1.15 : 0.85);
+  } catch (e) {
+    console.warn(`[EclipseTwinSwords] select error: ${e}`);
+  }
+}, { buttons: [InputButton.Sneak], state: ButtonState.Pressed });
+
 world.afterEvents.entityHitEntity.subscribe((ev) => {
   const player = ev.damagingEntity;
   if (!(player instanceof Player)) return;
   const held = heldWeapon(player);
   if (!held) return;
   try {
+    const st = getState(player);
+    const now = system.currentTick;
+    st.combo = now - st.comboAt > 30 ? 1 : st.combo + 1;
+    st.comboAt = now;
+    // basic swings alternate blades: right (vanilla swing, re-shaped) > left > cross slash
+    if (now >= st.castLockUntil && st.combo % 3 === 2) anim(player, "attack_left", "eclipse.cast", undefined, 0.15);
+    if (now >= st.castLockUntil && st.combo % 3 === 0) anim(player, "attack_cross", "eclipse.cast", undefined, 0.15);
     const at = bodyCenter(ev.hitEntity);
     if (held === "solaris") {
       Solaris.onMeleeHit(player, ev.hitEntity, at);
@@ -144,7 +130,12 @@ function updateStance(player, st, held, now) {
   st.stance = key;
   if (!key) return; // the stop expression already ended the stance on every client
   const items = key === "eclipse_idle" ? `'${ITEM.SOLARIS}', '${ITEM.NOCTIS}'` : `'${held === "solaris" ? ITEM.SOLARIS : ITEM.NOCTIS}'`;
-  anim(player, key, "eclipse.stance", `!query.is_item_name_any('slot.weapon.mainhand', 0, ${items})`, 0.3);
+  const stop = `!query.is_item_name_any('slot.weapon.mainhand', 0, ${items})`;
+  // layered, each fades in/out by its own blend_weight (see anims.py):
+  anim(player, key, "eclipse.stance", stop, 0.3);            // holding (standing)
+  anim(player, "walk", "eclipse.walk", stop, 0.3);           // walking
+  anim(player, "run", "eclipse.run", stop, 0.3);             // sprinting
+  anim(player, "attack", "eclipse.attack", stop, 0.2);       // basic sword swing
 }
 
 /** Write the legendary lore onto a freshly obtained blade. @param {Player} player @param {"solaris"|"noctis"} held */

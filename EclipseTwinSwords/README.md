@@ -17,19 +17,18 @@
 - SOLARIS: Gold Block ×4 + Nether Star (กลาง) + Blaze Rod (ล่าง)
 - NOCTIS: Crying Obsidian ×4 + Nether Star (กลาง) + Echo Shard (ล่าง)
 
-## การควบคุม (ออกแบบให้กดง่ายบนมือถือ ไม่มีคอมโบ)
-บนมือถือจะมีปุ่ม **Eclipse Skill** (interact button) ขึ้นเมื่อถือดาบ = "Use"
+## การควบคุม (ปุ่มเดียวต่อหน้าที่ กดง่ายบนมือถือ)
+| ปุ่ม | หน้าที่ |
+|---|---|
+| **ย่อ (Sneak)** กด 1 ครั้ง | **เปลี่ยนสกิล** ไปสกิลถัดไป (วนกลับ) |
+| **คลิกขวา / Use** (มือถือ: ปุ่ม **Cast Skill**) | **ใช้สกิลที่เลือกอยู่** |
 
-| ท่าทาง | SOLARIS | NOCTIS |
-|---|---|---|
-| Use | Solar Slash | Void Crescent |
-| ย่อ (Sneak) + Use | Radiant Spear | Abyss Field |
-| กระโดด (ลอยอยู่) + Use | Solar Crown | Moonfall |
-| เงยหน้าขึ้นฟ้า + Use *(พลัง 100)* | **Eclipse State** | **Eclipse State** |
-| เงยหน้า + ย่อ + Use *(พลัง 100 หรืออยู่ใน Eclipse State)* | **Heaven's Abyss** | **Heaven's Abyss** |
-
-ไม่มีปุ่มชนกัน: ท่า "เงยหน้า" จะทำงานเฉพาะตอนที่ Eclipse ใช้ได้เท่านั้น ถ้ายังใช้ไม่ได้จะออกสกิลปกติของดาบแทน
-การบิน (Creative/Elytra), ว่ายน้ำ, ปีนบันได และขี่สัตว์ ไม่นับเป็น "ลอยอยู่" จึงไม่ออก Crown/Moonfall โดยไม่ตั้งใจ
+- วงสกิล SOLARIS: Solar Slash → Radiant Spear → Solar Crown
+- วงสกิล NOCTIS: Void Crescent → Abyss Field → Moonfall
+- เมื่อ Eclipse Energy ครบ 100: **ECLIPSE STATE** และ **HEAVEN'S ABYSS** จะเพิ่มเข้ามาในวงสกิลเอง (ไม่ต้องกดวนผ่านช่องที่ยังใช้ไม่ได้)
+- เลือกสกิลแยกกันต่อดาบ (สลับดาบแล้วยังจำสกิลที่เลือกไว้), ใช้อัลติเมตแล้วจะกลับไปสกิลแรกอัตโนมัติ
+- ตอนเปลี่ยนสกิลจะมีเสียง + ท่าควงดาบสั้น ๆ + ชื่อสกิลขึ้นบน HUD
+- รองรับทั้งย่อแบบกดค้าง (PC/จอย) และย่อแบบแตะสลับ (มือถือ): กดปุ่มย่อ 1 ครั้ง = เปลี่ยน 1 สกิล
 
 ## สกิล
 | สกิล | กลไก | Damage | Cooldown |
@@ -64,9 +63,9 @@
 
 ## HUD (Actionbar)
 ```
-Slash READY | Spear 4.2s | Crown READY
+▶Slash READY | Spear 4.2s | Crown READY        (▶ = สกิลที่เลือกอยู่)
 SOL █████ VOID ███░░ 80%
-ECLIPSE READY  Look up + Use
+ECLIPSE READY  Sneak to select
 ```
 ระหว่าง Eclipse State แถบจะกลายเป็นเวลาที่เหลือ และบอกว่า Heaven's Abyss พร้อมหรือยัง
 กดสกิลตอนติด cooldown จะขึ้นเวลาที่เหลือ, ถือดาบครั้งแรกจะขึ้นคำแนะนำปุ่ม
@@ -80,8 +79,18 @@ ECLIPSE READY  Look up + Use
 - ส่วนที่เรืองแสงใช้ material `entity_emissive_alpha` (สว่างทั้งกลางวันและกลางคืน)
 
 ## Animation
-`idle_solaris, idle_noctis, eclipse_idle, solar_cast, radiant_spear, solar_crown, void_crescent, abyss_field, moonfall, eclipse_activate, eclipse_ultimate`
-ทุกท่าเป็นแบบ additive (ไม่ตีกับท่าเดินของเกม) และปิดตัวเองในมุมมองบุคคลที่ 1 เพื่อให้จอสะอาด
+| หมวด | Animation | ทำงานเมื่อ |
+|---|---|---|
+| ถือดาบ | `idle_solaris`, `idle_noctis`, `eclipse_idle` | ยืนนิ่งถือดาบคู่ (ท่าหายใจ) |
+| เดิน | `walk` | เดิน: ถือดาบสองเล่มต่ำพร้อมฟัน ตัดการแกว่งแขนแบบ vanilla ออก แกว่งตามจังหวะก้าว |
+| วิ่ง | `run` | Sprint: โน้มตัว ดาบสองเล่มกวาดไปด้านหลัง (วิ่งแบบอนิเมะ) ตัวเด้งตามก้าว |
+| โจมตี | `attack`, `attack_left`, `attack_cross` | ตีปกติ: ฟันเฉียงมือขวา → ครั้งที่ 2 ฟันมือซ้าย → ครั้งที่ 3 ฟันไขว้สองดาบ |
+| เปลี่ยนสกิล | `skill_select` | กดย่อ: ควงข้อมือสองดาบ |
+| ปล่อยสกิล | `solar_cast`, `radiant_spear`, `solar_crown`, `void_crescent`, `abyss_field`, `moonfall`, `eclipse_activate`, `eclipse_ultimate` | ตอนใช้สกิลแต่ละท่า |
+
+- ถือ/เดิน/วิ่ง/โจมตี เล่นซ้อนกันเป็น layer และค่อย ๆ ผสมกันเองตาม `blend_weight` (ความเร็วเดิน, sprint) จึงเปลี่ยนท่าลื่นโดยไม่ต้อง override `player.entity.json` (ไม่ชนกับแอดออนอื่น)
+- ท่าโจมตีพื้นฐานผูกกับจังหวะฟันของเกม (`variable.attack_time`) จึงทำงานแม้ฟันอากาศ
+- ไม่ทำงานตอนขี่สัตว์ ว่ายน้ำ หรือร่อน Elytra, และปิดในมุมมองบุคคลที่ 1 เพื่อให้จอสะอาด
 
 ## VFX (62 effects, 22 textures วาดด้วยโค้ดทั้งหมด)
 | VFX ที่ขอ | Effect ในแพ็ก |
@@ -107,10 +116,10 @@ ECLIPSE READY  Look up + Use
 - วงแหวนที่ติดตัวผู้เล่น (Crown / Eclipse) ส่งความเร็วผู้เล่นเข้า particle (`variable.vel`) จึงเกาะตัวลื่นแม้กำลังวิ่ง
 - สไตล์ Wuthering Waves: คมแสงมีเส้นสปีด, flash ขอบคม, วงแหวน shockwave, hit-stop, จอแฟลช, กล้องสั่น
 
-## เสียง (18 เสียง สังเคราะห์จากโค้ด ไม่ใช้ไฟล์เสียงภายนอก)
+## เสียง (19 เสียง สังเคราะห์จากโค้ด ไม่ใช้ไฟล์เสียงภายนอก)
 - Solar: `solaris.slash` (shing คริสตัล), `solaris.slash_hit`, `solaris.spear_cast` (ระฆังไล่โน้ต), `solaris.spear_fall`, `solaris.spear_impact` (ระฆังใหญ่ + บูม), `solaris.crown` (คอรัส)
 - Void: `noctis.crescent` (ซูมต่ำ), `noctis.crescent_hit`, `noctis.field`, `noctis.field_pulse`, `noctis.moonfall_charge`, `noctis.moonfall_impact` (sub-bass)
-- Eclipse: `eclipse.activate`, `eclipse.charge` (ชาร์จใหญ่ ตัดเงียบตอน hit-stop), `eclipse.rumble`, `eclipse.impact`, `eclipse.burst` (magical burst), `eclipse.ready`
+- Eclipse: `eclipse.activate`, `eclipse.charge` (ชาร์จใหญ่ ตัดเงียบตอน hit-stop), `eclipse.rumble`, `eclipse.impact`, `eclipse.burst` (magical burst), `eclipse.ready`, `eclipse.select` (เปลี่ยนสกิล)
 - เล่นแบบสุ่ม pitch ±4% ทุกครั้ง
 
 ## Performance (มือถือมาก่อน)
@@ -132,7 +141,8 @@ EclipseTwinSwords/
 │   ├── functions/eclipse/{give,energy_full,reset,help}.mcfunction
 │   ├── texts/ (en_US, th_TH)
 │   └── scripts/
-│       ├── main.js        ตรวจผู้เล่น / ไอเทม / input แล้วเรียกสกิล, loop ต่อ tick, lifecycle
+│       ├── main.js        ตรวจผู้เล่น / ไอเทม / input (ย่อ = เปลี่ยนสกิล, Use = ใช้) แล้วเรียกสกิล, loop ต่อ tick
+│       ├── skills.js      วงสกิล: เลือก / วน / ใช้สกิลที่เลือก
 │       ├── solaris.js     Solar Slash, Radiant Spear, Solar Crown, passive
 │       ├── noctis.js      Void Crescent, Abyss Field, Moonfall, passive
 │       ├── eclipse.js     Eclipse Energy, Eclipse State, Heaven's Abyss
@@ -167,7 +177,7 @@ node tools/eclipse/smoke_test.mjs     # รันสคริปต์จริ�
 - `build.py` ต้องมี numpy, Pillow และ ffmpeg (libvorbis) — สร้าง texture, particle, โมเดล, เสียง, แพ็ก และ preview ใน `preview/eclipse/`
 - Validator ตรวจ: JSON ทุกไฟล์, poly_mesh (จำนวน/ดัชนี/UV), parent bone, attachable → geometry/animation/render controller/texture, icon, lang key, manifest/UUID/script entry, และทุก particle/sound/animation/fog ที่สคริปต์เรียกต้องมีอยู่จริง
 - สคริปต์ผ่านการ type-check (`tsc --checkJs --strict`) กับ typings ทางการของ `@minecraft/server` 2.0.0
-- Smoke test ตรวจ 28 ข้อ: ทะลุ 2 ตัว, ดึง, DoT ของ Abyss Field, พลัง, Eclipse State, อัลติเมตครบ 5 เฟส (fog push/remove), ไม่มี error
+- Smoke test ตรวจ 37 ข้อ: การเปลี่ยน/ใช้สกิลด้วยย่อ+คลิกขวา, layer animation, ทะลุ 2 ตัว, ดึง, DoT ของ Abyss Field, พลัง, Eclipse State, อัลติเมตครบ 5 เฟส (fog push/remove), ไม่มี error
 
 ## สิ่งที่ควรเช็คในเกม (ทดสอบนอกเกมไม่ได้)
 - มุมและตำแหน่งดาบในมือ (third person ใช้ rig แบบเดียวกับดาบคาทานะที่เคยผ่าน, first person ใช้ตำแหน่งเดียวกับตรีศูล vanilla) — ถ้าต้องขยับ แก้ `TILT`, `GRIP_R/L` ใน `tools/eclipse/swords.py` หรือค่า `blade_fp` ใน `anims.py`

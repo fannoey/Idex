@@ -49,7 +49,7 @@
           "eclipse:twin_blade"
         ]
       },
-      "minecraft:interact_button": "Eclipse Skill",
+      "minecraft:interact_button": "Cast Skill",
       "minecraft:use_modifiers": {
         "use_duration": 3600,
         "movement_modifier": 1.0

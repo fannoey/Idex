@@ -399,6 +399,12 @@ def s_eclipse_ready():
                       (sparkle(0.7, 8, 4000, 9000, 0.1, 0.0, 0.3), 0.0, 0.12)), 1.2, 7000, 0.4)
 
 
+def s_select():
+    d = 0.5
+    return reverb(mix(d, (bell(2349, 0.35, 0.12), 0.0, 0.5), (bell(3136, 0.3, 0.1), 0.045, 0.4),
+                      (crack(0.015, 5000), 0.0, 0.15)), 0.4, 8000, 0.25)
+
+
 SOUNDS = {
     # id: (file, builder, volume, max_distance)
     "solaris.slash": ("solar_slash", s_solar_slash, 0.9, 32),
@@ -419,6 +425,7 @@ SOUNDS = {
     "eclipse.impact": ("eclipse_impact", s_eclipse_impact, 1.0, 72),
     "eclipse.burst": ("eclipse_burst", s_eclipse_burst, 0.95, 64),
     "eclipse.ready": ("eclipse_ready", s_eclipse_ready, 0.8, 16),
+    "eclipse.select": ("eclipse_select", s_select, 0.5, 8),
 }
 
 

@@ -202,7 +202,7 @@ def item_json(name, repair_item):
                 "minecraft:glint": False,
                 "minecraft:can_destroy_in_creative": False,
                 "minecraft:tags": {"tags": ["minecraft:is_sword", f"{NS}:twin_blade"]},
-                "minecraft:interact_button": "Eclipse Skill",
+                "minecraft:interact_button": "Cast Skill",
                 "minecraft:use_modifiers": {"use_duration": 3600, "movement_modifier": 1.0},
             },
         },
@@ -246,9 +246,10 @@ FUNCTIONS = {
     ],
     "eclipse/help": [
         "tellraw @s {\"rawtext\":[{\"text\":\"§l§6ECLIPSE TWIN SWORDS§r\"}]}",
-        "tellraw @s {\"rawtext\":[{\"text\":\"§6SOLARIS§7  Use: Solar Slash | Sneak+Use: Radiant Spear | Jump+Use: Solar Crown\"}]}",
-        "tellraw @s {\"rawtext\":[{\"text\":\"§5NOCTIS§7  Use: Void Crescent | Sneak+Use: Abyss Field | Jump+Use: Moonfall\"}]}",
-        "tellraw @s {\"rawtext\":[{\"text\":\"§dECLIPSE§7  (100 energy) Look up+Use: Eclipse State | Look up+Sneak+Use: Heaven's Abyss\"}]}",
+        "tellraw @s {\"rawtext\":[{\"text\":\"§eSneak§7 = change skill   §eUse / right click§7 = cast selected skill\"}]}",
+        "tellraw @s {\"rawtext\":[{\"text\":\"§6SOLARIS§7  Solar Slash > Radiant Spear > Solar Crown\"}]}",
+        "tellraw @s {\"rawtext\":[{\"text\":\"§5NOCTIS§7  Void Crescent > Abyss Field > Moonfall\"}]}",
+        "tellraw @s {\"rawtext\":[{\"text\":\"§dECLIPSE§7  at 100 energy Eclipse State and Heaven's Abyss join the skill wheel\"}]}",
     ],
 }
 
