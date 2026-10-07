@@ -1,0 +1,76 @@
+{
+  "format_version": "1.10.0",
+  "particle_effect": {
+    "description": {
+      "identifier": "eclipse:eclipse_split_ring",
+      "basic_render_parameters": {
+        "material": "particles_add",
+        "texture": "textures/particle/eclipse/split_ring"
+      }
+    },
+    "components": {
+      "minecraft:emitter_initialization": {
+        "creation_expression": "variable.sc = variable.scale ?? 1.0; variable.lf = variable.life ?? 1.0; variable.al = variable.alpha ?? 1.0; variable.ph = variable.phase ?? 0.0; variable.dir ?? { variable.dir.x = 0; variable.dir.y = 0; variable.dir.z = 1; };"
+      },
+      "minecraft:emitter_rate_instant": {
+        "num_particles": 1
+      },
+      "minecraft:emitter_lifetime_once": {
+        "active_time": 0.05
+      },
+      "minecraft:emitter_shape_point": {
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      "minecraft:particle_lifetime_expression": {
+        "max_lifetime": "v.lf"
+      },
+      "minecraft:particle_motion_parametric": {
+        "relative_position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": "v.ph + v.particle_age * 35"
+      },
+      "minecraft:particle_appearance_billboard": {
+        "size": [
+          "2.6 * v.sc * (1 - 0.35 * math.pow(math.max(0, 1 - v.particle_age * 6), 2))",
+          "2.6 * v.sc * (1 - 0.35 * math.pow(math.max(0, 1 - v.particle_age * 6), 2))"
+        ],
+        "facing_camera_mode": "direction_z",
+        "uv": {
+          "texture_width": 512,
+          "texture_height": 512,
+          "uv": [
+            0,
+            0
+          ],
+          "uv_size": [
+            512,
+            512
+          ]
+        },
+        "direction": {
+          "mode": "custom",
+          "custom_direction": [
+            "v.dir.x",
+            "v.dir.y",
+            "v.dir.z"
+          ]
+        }
+      },
+      "minecraft:particle_appearance_tinting": {
+        "color": [
+          1,
+          1,
+          1,
+          "math.clamp(math.min(v.particle_age * 8, (v.lf - v.particle_age) * 3), 0, 1) * v.al"
+        ]
+      }
+    }
+  }
+}

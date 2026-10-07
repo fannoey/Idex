@@ -1,0 +1,80 @@
+{
+  "format_version": "1.10.0",
+  "particle_effect": {
+    "description": {
+      "identifier": "eclipse:void_lines",
+      "basic_render_parameters": {
+        "material": "particles_add",
+        "texture": "textures/particle/eclipse/fx_atlas"
+      }
+    },
+    "components": {
+      "minecraft:emitter_initialization": {
+        "creation_expression": "variable.sc = variable.scale ?? 1.0; variable.dn = variable.density ?? 1.0; variable.dir ?? { variable.dir.x = 0; variable.dir.y = 0; variable.dir.z = 1; };"
+      },
+      "minecraft:emitter_rate_instant": {
+        "num_particles": "math.floor(3 * v.dn)"
+      },
+      "minecraft:emitter_lifetime_once": {
+        "active_time": 0.05
+      },
+      "minecraft:emitter_shape_sphere": {
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "radius": "0.45 * v.sc",
+        "surface_only": false,
+        "direction": [
+          "-v.dir.x * 2 + math.random(-0.4, 0.4)",
+          "-v.dir.y * 2 + math.random(-0.4, 0.4)",
+          "-v.dir.z * 2 + math.random(-0.4, 0.4)"
+        ]
+      },
+      "minecraft:particle_lifetime_expression": {
+        "max_lifetime": "math.random(0.2, 0.35)"
+      },
+      "minecraft:particle_initial_speed": "math.random(2, 4)",
+      "minecraft:particle_motion_dynamic": {
+        "linear_acceleration": [
+          0,
+          0,
+          0
+        ],
+        "linear_drag_coefficient": 3.0
+      },
+      "minecraft:particle_appearance_billboard": {
+        "size": [
+          "(0.35 + 0.3 * v.particle_random_1) * v.sc * (1 - (v.particle_age / v.particle_lifetime))",
+          "0.03 * v.sc"
+        ],
+        "facing_camera_mode": "lookat_direction",
+        "uv": {
+          "texture_width": 512,
+          "texture_height": 512,
+          "uv": [
+            0,
+            0
+          ],
+          "uv_size": [
+            64,
+            64
+          ]
+        },
+        "direction": {
+          "mode": "derive_from_velocity",
+          "min_speed_threshold": 0.01
+        }
+      },
+      "minecraft:particle_appearance_tinting": {
+        "color": [
+          "(v.particle_random_4 < 0.5 ? 0.6 : 0.3)",
+          "(v.particle_random_4 < 0.5 ? 0.28 : 0.46)",
+          "(v.particle_random_4 < 0.5 ? 1.0 : 1.0)",
+          "1 - (v.particle_age / v.particle_lifetime)"
+        ]
+      }
+    }
+  }
+}

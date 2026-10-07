@@ -1,0 +1,42 @@
+{
+  "format_version": "1.10.0",
+  "animations": {
+    "animation.eclipse.blade.third_person": {
+      "loop": true,
+      "bones": {
+        "blade_fp": {
+          "scale": 0.0
+        },
+        "twin_l": {
+          "scale": "query.is_item_name_any('slot.weapon.offhand', 0, '') ? 1.0 : 0.0"
+        }
+      }
+    },
+    "animation.eclipse.blade.first_person": {
+      "loop": true,
+      "bones": {
+        "blade_r": {
+          "scale": 0.0
+        },
+        "twin_l": {
+          "scale": 0.0
+        },
+        "blade_l": {
+          "scale": 0.0
+        },
+        "blade_fp": {
+          "position": [
+            -7.0,
+            -3.0,
+            -2.0
+          ],
+          "rotation": [
+            152.0,
+            -9.0,
+            25.0
+          ]
+        }
+      }
+    }
+  }
+}

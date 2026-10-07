@@ -1,0 +1,76 @@
+{
+  "format_version": "1.10.0",
+  "particle_effect": {
+    "description": {
+      "identifier": "eclipse:void_crescent_rim",
+      "basic_render_parameters": {
+        "material": "particles_add",
+        "texture": "textures/particle/eclipse/slash_edge"
+      }
+    },
+    "components": {
+      "minecraft:emitter_initialization": {
+        "creation_expression": "variable.sc = variable.scale ?? 1.0; variable.lf = variable.life ?? 0.2; variable.al = variable.alpha ?? 0.6; variable.spd = variable.speed ?? 30.0; variable.tilt = variable.tilt ?? 0.0; variable.dir ?? { variable.dir.x = 0; variable.dir.y = 0; variable.dir.z = 1; };"
+      },
+      "minecraft:emitter_rate_instant": {
+        "num_particles": 1
+      },
+      "minecraft:emitter_lifetime_once": {
+        "active_time": 0.05
+      },
+      "minecraft:emitter_shape_point": {
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      "minecraft:particle_lifetime_expression": {
+        "max_lifetime": "v.lf"
+      },
+      "minecraft:particle_motion_parametric": {
+        "relative_position": [
+          "v.dir.x * v.spd * v.particle_age",
+          "v.dir.y * v.spd * v.particle_age",
+          "v.dir.z * v.spd * v.particle_age"
+        ],
+        "rotation": "v.tilt"
+      },
+      "minecraft:particle_appearance_billboard": {
+        "size": [
+          "1.9 * v.sc * (0.92 + 0.16 * (v.particle_age / v.particle_lifetime))",
+          "0.95 * v.sc"
+        ],
+        "facing_camera_mode": "direction_z",
+        "uv": {
+          "texture_width": 256,
+          "texture_height": 128,
+          "uv": [
+            0,
+            0
+          ],
+          "uv_size": [
+            256,
+            128
+          ]
+        },
+        "direction": {
+          "mode": "custom",
+          "custom_direction": [
+            "v.dir.x",
+            "v.dir.y",
+            "v.dir.z"
+          ]
+        }
+      },
+      "minecraft:particle_appearance_tinting": {
+        "color": [
+          0.78,
+          0.5,
+          1.0,
+          "(1 - math.abs(2 * (v.particle_age / v.particle_lifetime) - 1)) * v.al"
+        ]
+      }
+    }
+  }
+}

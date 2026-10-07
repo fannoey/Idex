@@ -1,0 +1,97 @@
+{
+  "format_version": "1.10.0",
+  "particle_effect": {
+    "description": {
+      "identifier": "eclipse:void_passive_wisp",
+      "basic_render_parameters": {
+        "material": "particles_blend",
+        "texture": "textures/particle/eclipse/fx_atlas"
+      }
+    },
+    "components": {
+      "minecraft:emitter_initialization": {
+        "creation_expression": "variable.sc = variable.scale ?? 1.0; variable.dn = variable.density ?? 1.0;"
+      },
+      "minecraft:emitter_rate_instant": {
+        "num_particles": "math.max(1, math.floor(2 * v.dn))"
+      },
+      "minecraft:emitter_lifetime_once": {
+        "active_time": 0.05
+      },
+      "minecraft:emitter_shape_sphere": {
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "radius": "0.75 * v.sc",
+        "surface_only": true,
+        "direction": [
+          "math.random(-0.4, 0.4)",
+          0.6,
+          "math.random(-0.4, 0.4)"
+        ]
+      },
+      "minecraft:particle_lifetime_expression": {
+        "max_lifetime": "math.random(0.9, 1.4)"
+      },
+      "minecraft:particle_initial_speed": "math.random(0.1, 0.35)",
+      "minecraft:particle_motion_dynamic": {
+        "linear_acceleration": [
+          0,
+          0.1,
+          0
+        ],
+        "linear_drag_coefficient": 0.8
+      },
+      "minecraft:particle_appearance_billboard": {
+        "size": [
+          "(0.18 + 0.14 * v.particle_random_2) * v.sc * math.sin((v.particle_age / v.particle_lifetime) * 180)",
+          "(0.18 + 0.14 * v.particle_random_2) * v.sc * math.sin((v.particle_age / v.particle_lifetime) * 180)"
+        ],
+        "facing_camera_mode": "lookat_xyz",
+        "uv": {
+          "texture_width": 512,
+          "texture_height": 512,
+          "uv": [
+            "(v.particle_random_3 < 0.250 ? 0 : (v.particle_random_3 < 0.500 ? 64 : (v.particle_random_3 < 0.750 ? 128 : 192)))",
+            64
+          ],
+          "uv_size": [
+            64,
+            64
+          ]
+        }
+      },
+      "minecraft:particle_initial_spin": {
+        "rotation": "math.random(0, 360)",
+        "rotation_rate": "math.random(-40, 40)"
+      },
+      "minecraft:particle_appearance_tinting": {
+        "color": {
+          "gradient": {
+            "0.00": [
+              0.25,
+              0.08,
+              0.45,
+              0
+            ],
+            "0.30": [
+              0.18,
+              0.05,
+              0.34,
+              0.75
+            ],
+            "1.00": [
+              0.06,
+              0.0,
+              0.12,
+              0
+            ]
+          },
+          "interpolant": "(v.particle_age / v.particle_lifetime)"
+        }
+      }
+    }
+  }
+}

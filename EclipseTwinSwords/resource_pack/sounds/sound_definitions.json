@@ -1,0 +1,221 @@
+{
+  "format_version": "1.20.20",
+  "sound_definitions": {
+    "solaris.slash": {
+      "category": "player",
+      "min_distance": 4.0,
+      "max_distance": 32.0,
+      "sounds": [
+        {
+          "name": "sounds/eclipse/solar_slash",
+          "volume": 0.9,
+          "load_on_low_memory": true
+        }
+      ]
+    },
+    "solaris.slash_hit": {
+      "category": "player",
+      "min_distance": 4.0,
+      "max_distance": 32.0,
+      "sounds": [
+        {
+          "name": "sounds/eclipse/solar_slash_hit",
+          "volume": 0.9,
+          "load_on_low_memory": true
+        }
+      ]
+    },
+    "solaris.spear_cast": {
+      "category": "player",
+      "min_distance": 4.0,
+      "max_distance": 40.0,
+      "sounds": [
+        {
+          "name": "sounds/eclipse/solar_spear_cast",
+          "volume": 0.85,
+          "load_on_low_memory": true
+        }
+      ]
+    },
+    "solaris.spear_fall": {
+      "category": "player",
+      "min_distance": 4.0,
+      "max_distance": 40.0,
+      "sounds": [
+        {
+          "name": "sounds/eclipse/solar_spear_fall",
+          "volume": 0.9,
+          "load_on_low_memory": true
+        }
+      ]
+    },
+    "solaris.spear_impact": {
+      "category": "player",
+      "min_distance": 4.0,
+      "max_distance": 48.0,
+      "sounds": [
+        {
+          "name": "sounds/eclipse/solar_spear_impact",
+          "volume": 1.0,
+          "load_on_low_memory": true
+        }
+      ]
+    },
+    "solaris.crown": {
+      "category": "player",
+      "min_distance": 4.0,
+      "max_distance": 40.0,
+      "sounds": [
+        {
+          "name": "sounds/eclipse/solar_crown",
+          "volume": 0.9,
+          "load_on_low_memory": true
+        }
+      ]
+    },
+    "noctis.crescent": {
+      "category": "player",
+      "min_distance": 4.0,
+      "max_distance": 32.0,
+      "sounds": [
+        {
+          "name": "sounds/eclipse/void_crescent",
+          "volume": 0.9,
+          "load_on_low_memory": true
+        }
+      ]
+    },
+    "noctis.crescent_hit": {
+      "category": "player",
+      "min_distance": 4.0,
+      "max_distance": 32.0,
+      "sounds": [
+        {
+          "name": "sounds/eclipse/void_crescent_hit",
+          "volume": 0.9,
+          "load_on_low_memory": true
+        }
+      ]
+    },
+    "noctis.field": {
+      "category": "player",
+      "min_distance": 4.0,
+      "max_distance": 40.0,
+      "sounds": [
+        {
+          "name": "sounds/eclipse/void_abyss_field",
+          "volume": 0.95,
+          "load_on_low_memory": true
+        }
+      ]
+    },
+    "noctis.field_pulse": {
+      "category": "player",
+      "min_distance": 4.0,
+      "max_distance": 24.0,
+      "sounds": [
+        {
+          "name": "sounds/eclipse/void_field_pulse",
+          "volume": 0.7,
+          "load_on_low_memory": true
+        }
+      ]
+    },
+    "noctis.moonfall_charge": {
+      "category": "player",
+      "min_distance": 4.0,
+      "max_distance": 48.0,
+      "sounds": [
+        {
+          "name": "sounds/eclipse/void_moonfall_charge",
+          "volume": 0.95,
+          "load_on_low_memory": true
+        }
+      ]
+    },
+    "noctis.moonfall_impact": {
+      "category": "player",
+      "min_distance": 4.0,
+      "max_distance": 56.0,
+      "sounds": [
+        {
+          "name": "sounds/eclipse/void_moonfall_impact",
+          "volume": 1.0,
+          "load_on_low_memory": true
+        }
+      ]
+    },
+    "eclipse.activate": {
+      "category": "player",
+      "min_distance": 4.0,
+      "max_distance": 48.0,
+      "sounds": [
+        {
+          "name": "sounds/eclipse/eclipse_activate",
+          "volume": 1.0,
+          "load_on_low_memory": true
+        }
+      ]
+    },
+    "eclipse.charge": {
+      "category": "player",
+      "min_distance": 4.0,
+      "max_distance": 64.0,
+      "sounds": [
+        {
+          "name": "sounds/eclipse/eclipse_charge",
+          "volume": 1.0,
+          "load_on_low_memory": true
+        }
+      ]
+    },
+    "eclipse.rumble": {
+      "category": "player",
+      "min_distance": 4.0,
+      "max_distance": 64.0,
+      "sounds": [
+        {
+          "name": "sounds/eclipse/eclipse_rumble",
+          "volume": 1.0,
+          "load_on_low_memory": true
+        }
+      ]
+    },
+    "eclipse.impact": {
+      "category": "player",
+      "min_distance": 4.0,
+      "max_distance": 72.0,
+      "sounds": [
+        {
+          "name": "sounds/eclipse/eclipse_impact",
+          "volume": 1.0,
+          "load_on_low_memory": true
+        }
+      ]
+    },
+    "eclipse.burst": {
+      "category": "player",
+      "min_distance": 4.0,
+      "max_distance": 64.0,
+      "sounds": [
+        {
+          "name": "sounds/eclipse/eclipse_burst",
+          "volume": 0.95,
+          "load_on_low_memory": true
+        }
+      ]
+    },
+    "eclipse.ready": {
+      "category": "player",
+      "min_distance": 4.0,
+      "max_distance": 16.0,
+      "sounds": [
+        {
+          "name": "sounds/eclipse/eclipse_ready",
+          "volume": 0.8,
+          "load_on_low_memory": true
+        }
+      ]
+    }
+  }
+}

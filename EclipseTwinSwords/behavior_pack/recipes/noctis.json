@@ -1,0 +1,35 @@
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "eclipse:noctis"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      " C ",
+      "CNC",
+      " E "
+    ],
+    "key": {
+      "C": {
+        "item": "minecraft:crying_obsidian"
+      },
+      "N": {
+        "item": "minecraft:nether_star"
+      },
+      "E": {
+        "item": "minecraft:echo_shard"
+      }
+    },
+    "unlock": [
+      {
+        "item": "minecraft:nether_star"
+      }
+    ],
+    "result": {
+      "item": "eclipse:noctis"
+    }
+  }
+}

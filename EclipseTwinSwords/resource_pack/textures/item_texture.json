@@ -1,0 +1,12 @@
+{
+  "resource_pack_name": "eclipse_twin_swords",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "eclipse_solaris": {
+      "textures": "textures/items/solaris"
+    },
+    "eclipse_noctis": {
+      "textures": "textures/items/noctis"
+    }
+  }
+}

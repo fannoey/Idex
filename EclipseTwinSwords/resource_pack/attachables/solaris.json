@@ -1,0 +1,36 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:attachable": {
+    "description": {
+      "identifier": "eclipse:solaris",
+      "materials": {
+        "default": "entity_emissive_alpha"
+      },
+      "textures": {
+        "default": "textures/models/eclipse/eclipse_swords"
+      },
+      "geometry": {
+        "default": "geometry.eclipse.solaris",
+        "offhand": "geometry.eclipse.solaris_offhand"
+      },
+      "animations": {
+        "wield": "controller.animation.eclipse.blade",
+        "third_person": "animation.eclipse.blade.third_person",
+        "first_person": "animation.eclipse.blade.first_person"
+      },
+      "scripts": {
+        "animate": [
+          "wield"
+        ]
+      },
+      "render_controllers": [
+        {
+          "controller.render.eclipse.blade_main": "c.item_slot == 'main_hand'"
+        },
+        {
+          "controller.render.eclipse.blade_offhand": "c.item_slot == 'off_hand'"
+        }
+      ]
+    }
+  }
+}

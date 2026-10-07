@@ -1,3 +1,10 @@
+# Idex – Minecraft Bedrock Add-ons
+
+| Add-on | ไฟล์ติดตั้ง | รายละเอียด |
+|---|---|---|
+| **ECLIPSE TWIN SWORDS** ดาบคู่ SOLARIS / NOCTIS + ระบบ Eclipse | `dist/EclipseTwinSwords.mcaddon` | [EclipseTwinSwords/README.md](EclipseTwinSwords/README.md) |
+| VLONE Outfit ฮู้ด + กางเกงคาร์โก้ | `dist/Vlone_Outfit.mcaddon` | ด้านล่าง |
+
 # VLONE Outfit – Minecraft Bedrock Add-on
 
 ชุดเสื้อผ้า 3 ชิ้นสำหรับ Minecraft Bedrock (ใส่ได้จริงผ่านช่องเกราะ):

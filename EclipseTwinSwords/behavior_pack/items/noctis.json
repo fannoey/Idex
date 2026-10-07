@@ -1,0 +1,59 @@
+{
+  "format_version": "1.21.90",
+  "minecraft:item": {
+    "description": {
+      "identifier": "eclipse:noctis",
+      "menu_category": {
+        "category": "equipment",
+        "group": "minecraft:itemGroup.name.sword"
+      }
+    },
+    "components": {
+      "minecraft:icon": "eclipse_noctis",
+      "minecraft:display_name": {
+        "value": "item.eclipse.noctis.name"
+      },
+      "minecraft:max_stack_size": 1,
+      "minecraft:hand_equipped": true,
+      "minecraft:allow_off_hand": true,
+      "minecraft:damage": 9,
+      "minecraft:durability": {
+        "max_durability": 3000
+      },
+      "minecraft:enchantable": {
+        "slot": "sword",
+        "value": 15
+      },
+      "minecraft:repairable": {
+        "repair_items": [
+          {
+            "items": [
+              "minecraft:crying_obsidian"
+            ],
+            "repair_amount": 750
+          },
+          {
+            "items": [
+              "eclipse:noctis"
+            ],
+            "repair_amount": "context.other->query.remaining_durability + 0.12 * context.other->query.max_durability"
+          }
+        ]
+      },
+      "minecraft:rarity": "epic",
+      "minecraft:glint": false,
+      "minecraft:can_destroy_in_creative": false,
+      "minecraft:tags": {
+        "tags": [
+          "minecraft:is_sword",
+          "eclipse:twin_blade"
+        ]
+      },
+      "minecraft:interact_button": "Eclipse Skill",
+      "minecraft:use_modifiers": {
+        "use_duration": 3600,
+        "movement_modifier": 1.0
+      }
+    }
+  }
+}
