@@ -287,17 +287,18 @@ def pil_layer(w, h, draw_fn, ss=4):
 def paint_back_v(a, r):
     """Big distressed "V" on the back."""
     x, y, w, h = r
-    top, left = int(h * 0.44), 10
+    # fits between the hood (row ~40) and the top of the hem (row ~76)
+    top, left, sy = int(h * 0.43), 10, 0.84
     col = (200, 214, 223)
 
     def draw(d, s):
         polys = [[(3, 2), (16, 2), (25.5, 40), (19, 40)], [(29, 2), (37, 2), (24.5, 40), (21.5, 40)],
                  [(0, 0), (19, 0), (19, 3.2), (0, 3.2)], [(26.5, 0), (42, 0), (42, 3.2), (26.5, 3.2)]]
         for p in polys:
-            d.polygon([((left + px) * s, (top + py) * s) for px, py in p], fill=col + (255,))
+            d.polygon([((left + px) * s, (top + py * sy) * s) for px, py in p], fill=col + (255,))
         # cracks / torn paint
         for _ in range(9):
-            px, py = left + rng.uniform(4, 36), top + rng.uniform(4, 36)
+            px, py = left + rng.uniform(4, 36), top + rng.uniform(4, 30)
             pts = [(px * s, py * s)]
             for _ in range(4):
                 px += rng.uniform(-3, 3)
@@ -311,8 +312,59 @@ def paint_back_v(a, r):
     al = np.where(speck & (al > 0.5), 0.15, al)                              # worn specks
     rgb += rng.normal(0, 7, rgb.shape)
     rgb[..., 2] += 6                                                          # slight blue cast
+    GLOW["v_mask"] = (al[..., 0] > 0.5) & (rgb.mean(-1) > 100)              # paint, not cracks
     dst = a[y:y + h, x:x + w]
     dst[..., :3] = np.clip(rgb * al + dst[..., :3] * (1 - al), 0, 255)
+
+
+GLOW = {}
+GLOW_CORE = (232, 246, 255)
+GLOW_EDGE = (150, 210, 245)
+GLOW_HALO = (70, 150, 225)
+
+
+def grow(mask, n=1):
+    out = mask.copy()
+    for _ in range(n):
+        m = np.pad(out, 1)
+        out = m[1:-1, 1:-1] | m[:-2, 1:-1] | m[2:, 1:-1] | m[1:-1, :-2] | m[1:-1, 2:]
+    return out
+
+
+def glow_texture(back_face):
+    """Back panel for entity_emissive_alpha: alpha 0 = full-bright, alpha 255 = normal fabric."""
+    t = back_face.copy()
+    t[..., 3] = 255
+    v = GLOW["v_mask"]
+    inner = ~grow(~v, 1)
+    halo_prev = v
+    for k, amt in ((1, 0.55), (2, 0.32), (3, 0.16), (4, 0.07)):            # light spill on the fabric
+        ring = grow(v, k) & ~halo_prev
+        halo_prev = halo_prev | ring
+        t[ring, :3] = t[ring, :3] * (1 - amt) + np.array(GLOW_HALO, float) * amt
+        t[ring, 3] = 0
+    t[v, :3] = GLOW_EDGE
+    t[inner, :3] = np.array(GLOW_CORE, float) + rng.normal(0, 3, (int(inner.sum()), 3))
+    t[v, 3] = 0
+    return t
+
+
+class GlowPanel(Part):
+    """Zero-depth panel with per-face UV on the south (back) face only."""
+
+    def __init__(self, name, bone, origin, size, tex_size):
+        super().__init__(name, bone, origin, size, 0.0, None)
+        self.tex_size = tex_size
+
+    def faces_px(self):
+        return {"back": (0, 0) + tuple(self.tex_size)}
+
+    def faces_3d(self):
+        return [f for f in super().faces_3d() if f[0] == "back"]
+
+    def cube_json(self):
+        return {"origin": [round(o, 4) for o in self.origin], "size": [round(v, 4) for v in self.size],
+                "uv": {"south": {"uv": [0, 0], "uv_size": list(self.tex_size)}}}
 
 
 def p_torso(a, f, part):
@@ -751,7 +803,7 @@ def to_image(a):
 # --------------------------------------------------------------------------
 # Geometry JSON
 # --------------------------------------------------------------------------
-def geometry_json(identifier, parts, tex_h, prefix):
+def geometry_json(identifier, parts, tex_h, prefix, tex_w=ATLAS_W):
     used = {p.bone for p in parts}
     needed = set(used)
     for b in list(used):                      # include parents so the chain binds
@@ -775,7 +827,7 @@ def geometry_json(identifier, parts, tex_h, prefix):
         "minecraft:geometry": [{
             "description": {
                 "identifier": identifier,
-                "texture_width": ATLAS_W,
+                "texture_width": tex_w,
                 "texture_height": tex_h,
                 "visible_bounds_width": 3,
                 "visible_bounds_height": 3.5,
@@ -810,7 +862,8 @@ def bone_matrix(bone, pose):
 
 
 def render(layers, yaw=0.0, pitch=0.0, pose=None, scale=14, size=(420, 560), center_y=16.5, ss=2,
-           bg=(236, 236, 240)):
+           bg=(236, 236, 240), light=1.0):
+    """layers: (parts, image) or (parts, image, "emissive_alpha"). light<1 simulates night."""
     pose = pose or {}
     W, H = size[0] * ss, size[1] * ss
     sc = scale * ss
@@ -820,7 +873,9 @@ def render(layers, yaw=0.0, pitch=0.0, pose=None, scale=14, size=(420, 560), cen
     V = rot_x(pitch) @ rot_y(yaw)
     L = np.array([-0.35, 0.85, -0.55])
     L /= np.linalg.norm(L)
-    for parts, img in layers:
+    for layer in layers:
+        parts, img = layer[0], layer[1]
+        emissive = len(layer) > 2 and layer[2] == "emissive_alpha"
         tex = np.asarray(img).astype(float)
         th, tw = tex.shape[:2]
         for p in parts:
@@ -859,7 +914,8 @@ def render(layers, yaw=0.0, pitch=0.0, pose=None, scale=14, size=(420, 560), cen
                 cx = np.clip(tx + np.floor(s_ * tw_).astype(int), 0, tw - 1)
                 cy = np.clip(ty + np.floor(t_ * th_).astype(int), 0, th - 1)
                 texel = tex[cy, cx]
-                inside &= texel[..., 3] >= 128
+                if not emissive:
+                    inside &= texel[..., 3] >= 128
                 depth = p0[2] + s_ * u[2] + t_ * v[2]
                 sub_z = zb[y0:y1, x0:x1]
                 win = inside & (depth < sub_z - 1e-4)
@@ -868,9 +924,12 @@ def render(layers, yaw=0.0, pitch=0.0, pose=None, scale=14, size=(420, 560), cen
                 nn = Nw / np.linalg.norm(Nw)
                 if n[2] > 0:                       # seen from behind (two-sided planes / interiors)
                     nn = -nn
-                b = 0.58 + 0.42 * max(0.0, float(nn @ L))
+                b = (0.58 + 0.42 * max(0.0, float(nn @ L))) * light
+                bmap = np.full(texel.shape[:2], b)
+                if emissive:
+                    bmap[texel[..., 3] < 128] = 1.0          # alpha 0 = full-bright
                 sub_c = col[y0:y1, x0:x1]
-                sub_c[win] = texel[..., :3][win] * b
+                sub_c[win] = texel[..., :3][win] * bmap[win][:, None]
                 sub_z[win] = depth[win]
                 alpha_mask[y0:y1, x0:x1][win] = 1
     out = np.dstack([col, alpha_mask * 255])
@@ -925,8 +984,9 @@ def uid(name):
     return str(uuid.uuid5(uuid.NAMESPACE_URL, f"idex/vlone_outfit/{name}"))
 
 
-def attachable(identifier, geo, tex, layer_var, slot):
-    return {
+def attachable(identifier, geo, tex, layer_var, slot, glow=None):
+    worn = "c.item_slot != 'main_hand' && c.item_slot != 'off_hand'"
+    d = {
         "format_version": "1.10.0",
         "minecraft:attachable": {
             "description": {
@@ -936,12 +996,17 @@ def attachable(identifier, geo, tex, layer_var, slot):
                 "geometry": {"default": geo},
                 "scripts": {"parent_setup": f"variable.{layer_var} = 0.0;"},
                 # hide the 3D outfit while the item is only held in a hand
-                "render_controllers": [
-                    {"controller.render.armor": "c.item_slot != 'main_hand' && c.item_slot != 'off_hand'"}
-                ],
+                "render_controllers": [{"controller.render.armor": worn}],
             }
         },
     }
+    if glow:
+        desc = d["minecraft:attachable"]["description"]
+        desc["materials"]["glow"] = "entity_emissive_alpha"
+        desc["textures"]["glow"] = glow[1]
+        desc["geometry"]["glow"] = glow[0]
+        desc["render_controllers"].append({f"controller.render.{NS}.vlone_glow": worn})
+    return d
 
 
 def item(identifier, name, icon, slot, ench_slot, protection, durability):
@@ -987,6 +1052,14 @@ def main():
     hoodie_arr, hoodie_h = build_atlas(hoodie_all)
     hoodie_img = to_image(hoodie_arr)
 
+    # glowing back "V": a panel sitting 0.03 above the torso's back face
+    torso = next(p for p in common if p.name == "torso")
+    bx, by, bw, bh = torso.faces_px()["back"]
+    (tx0, ty0, _), (tx1, ty1, tz1) = torso.bounds()
+    glow_part = GlowPanel("v_glow", "body", [tx0, ty0, tz1 + 0.03], [tx1 - tx0, ty1 - ty0, 0], (bw, bh))
+    glow_img = to_image(glow_texture(hoodie_arr[by:by + bh, bx:bx + bw]))
+    glow_layer = ([glow_part], glow_img, "emissive_alpha")
+
     pants = pants_parts()
     pants_arr, pants_h = build_atlas(pants)
     pants_img = to_image(pants_arr)
@@ -1001,6 +1074,19 @@ def main():
     os.makedirs(os.path.join(RP, "textures/models/armor"), exist_ok=True)
     hoodie_img.save(os.path.join(RP, hoodie_tex + ".png"))
     pants_img.save(os.path.join(RP, pants_tex + ".png"))
+    glow_tex = "textures/models/armor/vlone_hoodie_glow"
+    glow_img.save(os.path.join(RP, glow_tex + ".png"))
+    geo_glow = f"geometry.{NS}.vlone_hoodie_glow"
+    write_json(os.path.join(RP, "models/entity/vlone_hoodie_glow.geo.json"),
+               geometry_json(geo_glow, [glow_part], bh, "glow", tex_w=bw))
+    write_json(os.path.join(RP, "render_controllers/vlone_glow.render_controllers.json"), {
+        "format_version": "1.8.0",
+        "render_controllers": {f"controller.render.{NS}.vlone_glow": {
+            "geometry": "Geometry.glow",
+            "materials": [{"*": "Material.glow"}],
+            "textures": ["Texture.glow"],
+        }},
+    })
 
     geo_down, geo_up, geo_pants = (f"geometry.{NS}.vlone_hoodie", f"geometry.{NS}.vlone_hoodie_up",
                                    f"geometry.{NS}.vlone_cargo_pants")
@@ -1013,9 +1099,11 @@ def main():
 
     ids = {"down": f"{NS}:vlone_hoodie", "up": f"{NS}:vlone_hoodie_up", "pants": f"{NS}:vlone_cargo_pants"}
     write_json(os.path.join(RP, "attachables/vlone_hoodie.json"),
-               attachable(ids["down"], geo_down, hoodie_tex, "chest_layer_visible", "torso"))
+               attachable(ids["down"], geo_down, hoodie_tex, "chest_layer_visible", "torso",
+                          glow=(geo_glow, glow_tex)))
     write_json(os.path.join(RP, "attachables/vlone_hoodie_up.json"),
-               attachable(ids["up"], geo_up, hoodie_tex, "chest_layer_visible", "torso"))
+               attachable(ids["up"], geo_up, hoodie_tex, "chest_layer_visible", "torso",
+                          glow=(geo_glow, glow_tex)))
     write_json(os.path.join(RP, "attachables/vlone_cargo_pants.json"),
                attachable(ids["pants"], geo_pants, pants_tex, "leg_layer_visible", "legs"))
 
@@ -1034,8 +1122,8 @@ def main():
                {"resource_pack_name": "vlone_outfit", "texture_name": "atlas.items", "texture_data": tex_data})
 
     # ---- previews
-    full_down = [(man, man_img), (common + down, hoodie_img), (pants, pants_img)]
-    full_up = [(man, man_img), (common + up, hoodie_img), (pants, pants_img)]
+    full_down = [(man, man_img), (common + down, hoodie_img), (pants, pants_img), glow_layer]
+    full_up = [(man, man_img), (common + up, hoodie_img), (pants, pants_img), glow_layer]
     walk = {"rightArm": 30, "leftArm": -30, "rightLeg": -28, "leftLeg": 28}
     views = [
         ("Hood down - front", render(full_down, 0, -6)),
@@ -1043,6 +1131,7 @@ def main():
         ("Hood up - 3/4", render(full_up, -32, -10)),
         ("Hood up - back 3/4", render(full_up, 148, -10)),
         ("Walking - side", render(full_down, -90, -4, pose=walk)),
+        ("Night - back (glow)", render(full_down, 160, -6, light=0.16, bg=(14, 16, 26))),
     ]
     pad, lab = 16, 34
     tw = sum(v.width for _, v in views) + pad * (len(views) + 1)
@@ -1070,6 +1159,25 @@ def main():
         dr.text((x + 6, pad), label, fill=(30, 30, 34), font=font(20))
         x += im.width + pad
     sheet.save(os.path.join(PREVIEW, "pieces_preview.png"))
+
+    night_bg = (14, 16, 26)
+    glow_views = [
+        ("Day", render(full_down, 180, -4, scale=17, size=(460, 620)), (236, 236, 240), (30, 30, 34)),
+        ("Night", render(full_down, 180, -4, scale=17, size=(460, 620), light=0.16, bg=night_bg), night_bg,
+         (220, 225, 240)),
+        ("Night - hood up", render(full_up, 150, -8, scale=17, size=(460, 620), light=0.16, bg=night_bg),
+         night_bg, (220, 225, 240)),
+    ]
+    gw = sum(v.width for _, v, _, _ in glow_views)
+    gsheet = Image.new("RGB", (gw, 620 + lab + pad), (236, 236, 240))
+    dr = ImageDraw.Draw(gsheet)
+    x = 0
+    for label, im, bgc, fg in glow_views:
+        gsheet.paste(Image.new("RGB", (im.width, gsheet.height), bgc), (x, 0))
+        gsheet.paste(im, (x, lab + pad), im)
+        dr.text((x + 14, pad), label, fill=fg, font=font(22))
+        x += im.width
+    gsheet.save(os.path.join(PREVIEW, "glow_preview.png"))
     hoodie_img.resize((hoodie_img.width, hoodie_img.height), Image.NEAREST).save(
         os.path.join(PREVIEW, "hoodie_texture.png"))
     pants_img.save(os.path.join(PREVIEW, "pants_texture.png"))
