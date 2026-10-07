@@ -1,0 +1,29 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Abyssal Inferno (RP)",
+    "description": "Black flame / void particles and skill animations",
+    "uuid": "90b7b39e-80ce-4f0a-97c2-d45aae2e2bfb",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      60
+    ]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "58be05f7-0307-4fbf-883b-66771c9dc414",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "format_version": "1.10.0",
+  "particle_effect": {
+    "description": {
+      "identifier": "abyss:core_halo",
+      "basic_render_parameters": {
+        "material": "particles_add",
+        "texture": "textures/particle/abyss/glow"
+      }
+    },
+    "components": {
+      "minecraft:emitter_rate_instant": {
+        "num_particles": 1
+      },
+      "minecraft:emitter_lifetime_once": {
+        "active_time": 0.05
+      },
+      "minecraft:emitter_shape_point": {},
+      "minecraft:particle_lifetime_expression": {
+        "max_lifetime": 3.55
+      },
+      "minecraft:particle_initial_speed": 0,
+      "minecraft:particle_motion_dynamic": {
+        "linear_acceleration": [
+          0,
+          0,
+          0
+        ],
+        "linear_drag_coefficient": 0
+      },
+      "minecraft:particle_appearance_billboard": {
+        "size": [
+          "7.0 * (math.min(1, v.particle_age / 0.6) * (v.particle_age > 2.6 ? math.max(0.15, 1 - (v.particle_age - 2.6) / 0.9) : 1)) * (1 + 0.15 * math.sin(v.particle_age * 500))",
+          "7.0 * (math.min(1, v.particle_age / 0.6) * (v.particle_age > 2.6 ? math.max(0.15, 1 - (v.particle_age - 2.6) / 0.9) : 1)) * (1 + 0.15 * math.sin(v.particle_age * 500))"
+        ],
+        "facing_camera_mode": "lookat_xyz",
+        "uv": {
+          "texture_width": 64,
+          "texture_height": 64,
+          "uv": [
+            0,
+            0
+          ],
+          "uv_size": [
+            64,
+            64
+          ]
+        }
+      },
+      "minecraft:particle_appearance_tinting": {
+        "color": [
+          0.55,
+          0.12,
+          1.0,
+          0.75
+        ]
+      }
+    }
+  }
+}

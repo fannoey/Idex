@@ -1,0 +1,28 @@
+{
+  "format_version": "1.21.40",
+  "minecraft:item": {
+    "description": {
+      "identifier": "abyss:abyssal_inferno",
+      "menu_category": {
+        "category": "equipment"
+      }
+    },
+    "components": {
+      "minecraft:icon": "abyss_abyssal_inferno",
+      "minecraft:display_name": {
+        "value": "§l§4Abyssal §5Inferno"
+      },
+      "minecraft:max_stack_size": 1,
+      "minecraft:hand_equipped": true,
+      "minecraft:damage": 6,
+      "minecraft:enchantable": {
+        "slot": "sword",
+        "value": 15
+      },
+      "minecraft:can_destroy_in_creative": false,
+      "minecraft:custom_components": [
+        "abyss:inferno_weapon"
+      ]
+    }
+  }
+}

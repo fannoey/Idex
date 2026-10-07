@@ -1,0 +1,72 @@
+{
+  "format_version": "1.10.0",
+  "particle_effect": {
+    "description": {
+      "identifier": "abyss:sun_ring_c",
+      "basic_render_parameters": {
+        "material": "particles_blend",
+        "texture": "textures/particle/abyss/flame_sheet"
+      }
+    },
+    "components": {
+      "minecraft:emitter_rate_steady": {
+        "spawn_rate": 40,
+        "max_particles": 80
+      },
+      "minecraft:emitter_lifetime_once": {
+        "active_time": 4.95
+      },
+      "minecraft:emitter_shape_point": {},
+      "minecraft:particle_lifetime_expression": {
+        "max_lifetime": "math.random(0.45, 0.7)"
+      },
+      "minecraft:particle_motion_parametric": {
+        "relative_position": [
+          "((math.cos((v.particle_random_1 * 360 + v.particle_age * 340)) * (1.45 * (v.emitter_age > 4.55 ? math.max(0.08, 1 - (v.emitter_age - 4.55) / 0.45) : math.min(1, v.emitter_age / 0.35)))) * -0.5000 - (math.sin((v.particle_random_1 * 360 + v.particle_age * 340)) * (1.45 * (v.emitter_age > 4.55 ? math.max(0.08, 1 - (v.emitter_age - 4.55) / 0.45) : math.min(1, v.emitter_age / 0.35))) * 0.2588) * 0.8660)",
+          "(math.sin((v.particle_random_1 * 360 + v.particle_age * 340)) * (1.45 * (v.emitter_age > 4.55 ? math.max(0.08, 1 - (v.emitter_age - 4.55) / 0.45) : math.min(1, v.emitter_age / 0.35))) * 0.9659)",
+          "((math.cos((v.particle_random_1 * 360 + v.particle_age * 340)) * (1.45 * (v.emitter_age > 4.55 ? math.max(0.08, 1 - (v.emitter_age - 4.55) / 0.45) : math.min(1, v.emitter_age / 0.35)))) * 0.8660 + (math.sin((v.particle_random_1 * 360 + v.particle_age * 340)) * (1.45 * (v.emitter_age > 4.55 ? math.max(0.08, 1 - (v.emitter_age - 4.55) / 0.45) : math.min(1, v.emitter_age / 0.35))) * 0.2588) * -0.5000)"
+        ]
+      },
+      "minecraft:particle_appearance_billboard": {
+        "size": [
+          "0.3 * (1 - 0.4 * v.particle_age / v.particle_lifetime)",
+          "0.5 * (1 - 0.4 * v.particle_age / v.particle_lifetime)"
+        ],
+        "facing_camera_mode": "lookat_xyz",
+        "uv": {
+          "texture_width": 256,
+          "texture_height": 64,
+          "flipbook": {
+            "base_UV": [
+              0,
+              0
+            ],
+            "size_UV": [
+              32,
+              64
+            ],
+            "step_UV": [
+              32,
+              0
+            ],
+            "frames_per_second": 16,
+            "max_frame": 8,
+            "stretch_to_lifetime": true,
+            "loop": false
+          }
+        }
+      },
+      "minecraft:particle_appearance_tinting": {
+        "color": {
+          "interpolant": "v.particle_age / v.particle_lifetime",
+          "gradient": {
+            "0.0": "#00000000",
+            "0.1": "#F0140612",
+            "0.6": "#E00A020C",
+            "1.0": "#00000000"
+          }
+        }
+      }
+    }
+  }
+}

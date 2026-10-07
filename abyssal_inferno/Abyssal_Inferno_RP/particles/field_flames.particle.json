@@ -1,0 +1,95 @@
+{
+  "format_version": "1.10.0",
+  "particle_effect": {
+    "description": {
+      "identifier": "abyss:field_flames",
+      "basic_render_parameters": {
+        "material": "particles_blend",
+        "texture": "textures/particle/abyss/flame_sheet"
+      }
+    },
+    "components": {
+      "minecraft:emitter_initialization": {
+        "creation_expression": "v.rad = v.radius > 0 ? v.radius : 4; v.lf = v.life > 0 ? v.life : 4;"
+      },
+      "minecraft:emitter_rate_steady": {
+        "spawn_rate": 30,
+        "max_particles": 90
+      },
+      "minecraft:emitter_lifetime_expression": {
+        "activation_expression": 1,
+        "expiration_expression": "v.emitter_age > v.lf - 0.6"
+      },
+      "minecraft:emitter_shape_disc": {
+        "radius": "v.rad",
+        "plane_normal": [
+          0,
+          1,
+          0
+        ],
+        "offset": [
+          0,
+          0.1,
+          0
+        ],
+        "direction": [
+          0,
+          1,
+          0
+        ]
+      },
+      "minecraft:particle_lifetime_expression": {
+        "max_lifetime": "math.random(0.6, 1.2)"
+      },
+      "minecraft:particle_initial_speed": "math.random(0.1, 0.5)",
+      "minecraft:particle_motion_dynamic": {
+        "linear_acceleration": [
+          0,
+          1.6,
+          0
+        ],
+        "linear_drag_coefficient": 1.2
+      },
+      "minecraft:particle_appearance_billboard": {
+        "size": [
+          "(0.35 + v.particle_random_1 * 0.3) * (1 - 0.4 * v.particle_age / v.particle_lifetime)",
+          "(0.7 + v.particle_random_1 * 0.6) * (1 - 0.4 * v.particle_age / v.particle_lifetime)"
+        ],
+        "facing_camera_mode": "lookat_y",
+        "uv": {
+          "texture_width": 256,
+          "texture_height": 64,
+          "flipbook": {
+            "base_UV": [
+              0,
+              0
+            ],
+            "size_UV": [
+              32,
+              64
+            ],
+            "step_UV": [
+              32,
+              0
+            ],
+            "frames_per_second": 16,
+            "max_frame": 8,
+            "stretch_to_lifetime": true,
+            "loop": false
+          }
+        }
+      },
+      "minecraft:particle_appearance_tinting": {
+        "color": {
+          "interpolant": "v.particle_age / v.particle_lifetime",
+          "gradient": {
+            "0.0": "#00000000",
+            "0.1": "#F0140612",
+            "0.6": "#E00A020C",
+            "1.0": "#00000000"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "format_version": "1.10.0",
+  "particle_effect": {
+    "description": {
+      "identifier": "abyss:ring_wave_red",
+      "basic_render_parameters": {
+        "material": "particles_add",
+        "texture": "textures/particle/abyss/ring"
+      }
+    },
+    "components": {
+      "minecraft:emitter_initialization": {
+        "creation_expression": "v.rad = v.radius > 0 ? v.radius : 3.0; v.lf = v.life > 0 ? v.life : 0.4;"
+      },
+      "minecraft:emitter_rate_instant": {
+        "num_particles": 1
+      },
+      "minecraft:emitter_lifetime_once": {
+        "active_time": 0.05
+      },
+      "minecraft:emitter_shape_point": {
+        "offset": [
+          0,
+          0.06,
+          0
+        ]
+      },
+      "minecraft:particle_lifetime_expression": {
+        "max_lifetime": "v.lf"
+      },
+      "minecraft:particle_initial_spin": {
+        "rotation": "math.random(0, 360)",
+        "rotation_rate": 0.0
+      },
+      "minecraft:particle_initial_speed": 0,
+      "minecraft:particle_motion_dynamic": {
+        "linear_acceleration": [
+          0,
+          0,
+          0
+        ],
+        "linear_drag_coefficient": 0
+      },
+      "minecraft:particle_appearance_billboard": {
+        "size": [
+          "v.rad * 2.33 * (1 - math.pow(1 - v.particle_age / v.particle_lifetime, 3))",
+          "v.rad * 2.33 * (1 - math.pow(1 - v.particle_age / v.particle_lifetime, 3))"
+        ],
+        "facing_camera_mode": "emitter_transform_xz",
+        "uv": {
+          "texture_width": 128,
+          "texture_height": 128,
+          "uv": [
+            0,
+            0
+          ],
+          "uv_size": [
+            128,
+            128
+          ]
+        }
+      },
+      "minecraft:particle_appearance_tinting": {
+        "color": {
+          "interpolant": "v.particle_age / v.particle_lifetime",
+          "gradient": {
+            "0.0": "#FFFFE6C0",
+            "0.2": "#FFFF6A3A",
+            "0.5": "#FFC0182E",
+            "1.0": "#00300010"
+          }
+        }
+      }
+    }
+  }
+}

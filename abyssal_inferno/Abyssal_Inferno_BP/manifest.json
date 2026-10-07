@@ -1,0 +1,54 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Abyssal Inferno (BP)",
+    "description": "Black Flame / Void / Abyss combat power - Sneak: switch skill, Use: cast",
+    "uuid": "fb97fc7c-1639-4f7c-baa4-a322ab1598df",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      60
+    ]
+  },
+  "modules": [
+    {
+      "type": "data",
+      "uuid": "494c21bb-f1e1-464f-9ad6-9f78fe444d08",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "type": "script",
+      "language": "javascript",
+      "uuid": "6bf4891c-288a-4045-a32e-5c4bb916862d",
+      "version": [
+        1,
+        0,
+        0
+      ],
+      "entry": "scripts/main.js"
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "90b7b39e-80ce-4f0a-97c2-d45aae2e2bfb",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "module_name": "@minecraft/server",
+      "version": "1.17.0"
+    }
+  ]
+}

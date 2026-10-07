@@ -1,0 +1,38 @@
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "abyss:abyssal_inferno"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      " E ",
+      "CNC",
+      " B "
+    ],
+    "key": {
+      "E": {
+        "item": "minecraft:echo_shard"
+      },
+      "C": {
+        "item": "minecraft:crying_obsidian"
+      },
+      "N": {
+        "item": "minecraft:netherite_sword"
+      },
+      "B": {
+        "item": "minecraft:blaze_rod"
+      }
+    },
+    "unlock": [
+      {
+        "item": "minecraft:netherite_sword"
+      }
+    ],
+    "result": {
+      "item": "abyss:abyssal_inferno"
+    }
+  }
+}

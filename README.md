@@ -56,3 +56,59 @@ python3 tools/build_outfit.py
 - รองรับ Minecraft Bedrock 1.21.40 ขึ้นไป
 - โมเดลอิงสัดส่วนแขนแบบ classic (4 พิกเซล) ถ้าสกินแขนเล็ก (slim) แขนเสื้อจะหลวมขึ้นเล็กน้อย
 - ตอนถือไว้ในมือจะไม่แสดงโมเดล 3D (แสดงเฉพาะตอนสวมใส่)
+
+---
+
+# Abyssal Inferno – Minecraft Bedrock Add-on
+
+พลังธาตุ **ไฟ + ความมืด + ความว่างเปล่า** แนว Action RPG / Burst / Combo ผูกกับอาวุธ `abyss:abyssal_inferno`
+
+ไฟล์ติดตั้ง: `dist/Abyssal_Inferno.mcaddon` (Bedrock 1.21.60+, ไม่ต้องเปิด Experimental)
+
+```
+/give @s abyss:abyssal_inferno
+```
+สูตรคราฟต์: Echo Shard (บน) + Crying Obsidian ×2 + Netherite Sword (กลาง) + Blaze Rod (ล่าง)
+
+## การควบคุม (ระบบสลับสกิล)
+| ปุ่ม | ผล |
+|---|---|
+| **ย่อ (Sneak) กด 1 ครั้ง** | สลับสกิลถัดไป วนเป็นวง 1 → 6 → 1 (ชื่อสกิลขึ้นกลางจอ + HUD) |
+| **คลิกขวา (Use)** | ใช้สกิลที่เลือกอยู่ |
+| **กดค้างคลิกขวา** (ตอนเลือก Void Combustion) | ชาร์จ — ปล่อยปุ่มเพื่อระเบิด (ชาร์จเต็ม 1.5 วิ) |
+| **คลิกซ้ายใส่ศัตรู** | Black Flame Combo 5 จังหวะ |
+
+ลำดับสกิลในวง: 1 Abyss Rend → 2 Black Sun → 3 Abyssal Flare → 4 Void Spear → 5 Void Combustion → 6 End of All Flames
+
+HUD (actionbar) แสดง: สกิลที่เลือก + คูลดาวน์, เกจ Inferno/Void 20 ช่อง, Combo, เวลา Abyss Ignition, ULTIMATE READY
+
+## สกิล
+| สกิล | CD | สรุป |
+|---|---|---|
+| Black Flame Combo | – | 6/7/8/10/15 dmg, ฮิต 3 คลื่นไฟ 4 บล็อก, ฮิต 4 มีโอกาส Void Mark 35%, ฮิต 5 กระโดดฟาดระเบิดไฟดำ r3 + Burn |
+| Abyss Rend | 5s | รอยแยก void วิ่งไปข้างหน้า 8 บล็อก 18 dmg, knockback, Mark +1, Void +15 |
+| Black Sun | 12s | ดวงอาทิตย์ดำ 5 วิ ดูดศัตรู r5 ทุก 0.5 วิ (4 dmg + Mark) → Void Collapse 30 dmg r6, Void +25 |
+| Abyssal Flare | 8s | ระเบิดไฟดำรอบตัว r5 20 dmg, Burn, Mark +1, Inferno +15, Void +10 |
+| Void Spear | 6s | หอกพุ่งทะลุ 12 บล็อก 22 dmg (+10 ถ้ามี Mark), Mark +2, Void +20 |
+| Void Combustion | ชาร์จ | ปกติ 15 dmg r3 / เต็ม 25 dmg r5 + Void +20 + Void Zone 4 วิ (2 dmg ทุก 0.5 วิ, 30% Mark) |
+| End of All Flames | เกจ 100/100 | Void Core ลอยเหนือหัว → ดูดศัตรู r12 → ยุบตัว → ระเบิด 60 dmg r12 + Burn + Mark +3 + Stagger, เกจรีเซ็ตเป็น 0 |
+
+ระบบสถานะ: Burn 3 วิ (2 dmg/0.5 วิ, Mark ≥3 → Abyss Burn 3 dmg + โอกาส Void Explosion), Void Mark 0–5 (ครบ 5 → Void Break 30 dmg r4),
+Combo 0–15 (หลุดถ้าไม่ตี 1.5 วิ; 3 = +5% dmg, 5 = haste, 10 = +15% dmg, 15 = Black Flame Explosion แล้วลดเหลือ 10),
+Abyss Ignition 10 วิ เมื่อเกจเต็มทั้งคู่ (+25% dmg, haste II, Burn/Void Break +25%), Passive Black Flame / Abyss Consumption / Void Dominance,
+Intro *From the Abyss* (ตอนชักอาวุธขึ้นมือ, CD 20 วิ), Outro *Ashes Remain* (ตอนเก็บอาวุธหลังต่อสู้ → สนามไฟดำ r4 5 วิ)
+
+Scoreboard: `abyss_inferno abyss_void abyss_combo abyss_mark abyss_burn abyss_skill1-4 abyss_select` · Dynamic property เก็บเกจ/สกิลที่เลือกข้ามการออกเกม
+
+## เอฟเฟกต์
+63 particle (ไฟดำ = ชั้น blend สีดำ + ชั้น additive แดง/ม่วงซ้อนกัน เพื่อให้ "ดำแต่เรืองขอบ") เช่น วงเวทนัยน์ตาแห่งห้วงเหว, รอยแยก void, วงแหวนแตก, หอก void, ดวงอาทิตย์ดำ + วงแหวนไฟหมุน 3 ระนาบ, Void Core ม่วง, คลื่นไฟแผ่รอบทิศ, เสาไฟ, รูน Void Mark บอกจำนวน stack เหนือหัวศัตรู
+และท่าทาง 16 ท่า (`animation.abyss.*`) ตัวอย่าง texture: `preview/abyssal_particles_preview.png`
+
+## โครงสร้างไฟล์
+```
+tools/build_abyssal.py                     สร้าง texture, particle, animation, entity, item, manifest, .mcaddon
+abyssal_inferno/Abyssal_Inferno_BP/scripts  Script API (main, config, state, combat, skills, hud)
+abyssal_inferno/Abyssal_Inferno_RP          particles/, animations/, textures/particle/abyss/
+```
+ปรับตัวเลข damage/CD ได้ที่ `scripts/config.js` แล้วสร้างใหม่ด้วย `python3 tools/build_abyssal.py`
+(ถ้าลงทับเวอร์ชันเก่า ให้ลบ pack เดิมออกจากโลกก่อน หรือเพิ่ม VERSION ใน build script)

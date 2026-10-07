@@ -1,0 +1,64 @@
+{
+  "format_version": "1.10.0",
+  "particle_effect": {
+    "description": {
+      "identifier": "abyss:sun_ring_b",
+      "basic_render_parameters": {
+        "material": "particles_add",
+        "texture": "textures/particle/abyss/spark"
+      }
+    },
+    "components": {
+      "minecraft:emitter_rate_steady": {
+        "spawn_rate": 60,
+        "max_particles": 120
+      },
+      "minecraft:emitter_lifetime_once": {
+        "active_time": 4.95
+      },
+      "minecraft:emitter_shape_point": {},
+      "minecraft:particle_lifetime_expression": {
+        "max_lifetime": "math.random(0.45, 0.7)"
+      },
+      "minecraft:particle_motion_parametric": {
+        "relative_position": [
+          "((math.cos((v.particle_random_1 * 360 + v.particle_age * -260)) * (2.0 * (v.emitter_age > 4.55 ? math.max(0.08, 1 - (v.emitter_age - 4.55) / 0.45) : math.min(1, v.emitter_age / 0.35)))) * 0.5000 - (math.sin((v.particle_random_1 * 360 + v.particle_age * -260)) * (2.0 * (v.emitter_age > 4.55 ? math.max(0.08, 1 - (v.emitter_age - 4.55) / 0.45) : math.min(1, v.emitter_age / 0.35))) * 0.8192) * 0.8660)",
+          "(math.sin((v.particle_random_1 * 360 + v.particle_age * -260)) * (2.0 * (v.emitter_age > 4.55 ? math.max(0.08, 1 - (v.emitter_age - 4.55) / 0.45) : math.min(1, v.emitter_age / 0.35))) * -0.5736)",
+          "((math.cos((v.particle_random_1 * 360 + v.particle_age * -260)) * (2.0 * (v.emitter_age > 4.55 ? math.max(0.08, 1 - (v.emitter_age - 4.55) / 0.45) : math.min(1, v.emitter_age / 0.35)))) * 0.8660 + (math.sin((v.particle_random_1 * 360 + v.particle_age * -260)) * (2.0 * (v.emitter_age > 4.55 ? math.max(0.08, 1 - (v.emitter_age - 4.55) / 0.45) : math.min(1, v.emitter_age / 0.35))) * 0.8192) * 0.5000)"
+        ]
+      },
+      "minecraft:particle_appearance_billboard": {
+        "size": [
+          "0.22 * (1 - 0.5 * v.particle_age / v.particle_lifetime)",
+          "0.22 * (1 - 0.5 * v.particle_age / v.particle_lifetime)"
+        ],
+        "facing_camera_mode": "lookat_xyz",
+        "uv": {
+          "texture_width": 16,
+          "texture_height": 16,
+          "uv": [
+            0,
+            0
+          ],
+          "uv_size": [
+            16,
+            16
+          ]
+        }
+      },
+      "minecraft:particle_appearance_tinting": {
+        "color": {
+          "interpolant": "v.particle_age / v.particle_lifetime",
+          "gradient": {
+            "0.0": "#00F0D0FF",
+            "0.08": "#FFD7A8FF",
+            "0.3": "#FF9A4DFF",
+            "0.6": "#FF5A12C8",
+            "0.85": "#AA2A0670",
+            "1.0": "#00100030"
+          }
+        }
+      }
+    }
+  }
+}
