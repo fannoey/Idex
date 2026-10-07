@@ -1,0 +1,80 @@
+{
+  "format_version": "1.21.40",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "idex:reaper_phantom",
+      "is_spawnable": false,
+      "is_summonable": true,
+      "is_experimental": false,
+      "properties": {
+        "idex:size": {
+          "type": "float",
+          "range": [
+            0.1,
+            8.0
+          ],
+          "default": 2.2,
+          "client_sync": true
+        }
+      }
+    },
+    "component_groups": {
+      "idex:despawn": {
+        "minecraft:instant_despawn": {}
+      }
+    },
+    "components": {
+      "minecraft:type_family": {
+        "family": [
+          "reaper_fx",
+          "inanimate"
+        ]
+      },
+      "minecraft:collision_box": {
+        "width": 0.1,
+        "height": 0.1
+      },
+      "minecraft:physics": {
+        "has_gravity": false,
+        "has_collision": false
+      },
+      "minecraft:pushable": {
+        "is_pushable": false,
+        "is_pushable_by_piston": false
+      },
+      "minecraft:damage_sensor": {
+        "triggers": [
+          {
+            "cause": "all",
+            "deals_damage": "no"
+          }
+        ]
+      },
+      "minecraft:knockback_resistance": {
+        "value": 1.0
+      },
+      "minecraft:fire_immune": {},
+      "minecraft:health": {
+        "value": 1,
+        "max": 1
+      },
+      "minecraft:conditional_bandwidth_optimization": {},
+      "minecraft:timer": {
+        "looping": false,
+        "time": 40.0,
+        "time_down_event": {
+          "event": "idex:despawn"
+        }
+      }
+    },
+    "events": {
+      "idex:despawn": {
+        "add": {
+          "component_groups": [
+            "idex:despawn"
+          ]
+        }
+      }
+    }
+  }
+}

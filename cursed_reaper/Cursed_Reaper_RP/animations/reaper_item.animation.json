@@ -1,0 +1,47 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.idex.reaper_item.fp_hide": {
+      "loop": true,
+      "bones": {
+        "reaper": {
+          "scale": 0
+        }
+      }
+    },
+    "animation.idex.reaper_item.edge_glow": {
+      "loop": true,
+      "animation_length": 0.8,
+      "particle_effects": {
+        "0.0": {
+          "effect": "edge",
+          "locator": "edge_0"
+        },
+        "0.1": {
+          "effect": "edge",
+          "locator": "edge_1"
+        },
+        "0.2": {
+          "effect": "edge",
+          "locator": "edge_2"
+        },
+        "0.3": {
+          "effect": "edge",
+          "locator": "edge_3"
+        },
+        "0.4": {
+          "effect": "edge",
+          "locator": "edge_4"
+        },
+        "0.5": {
+          "effect": "edge",
+          "locator": "edge_5"
+        },
+        "0.6": {
+          "effect": "edge",
+          "locator": "blade_tip"
+        }
+      }
+    }
+  }
+}

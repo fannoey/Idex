@@ -1,0 +1,9 @@
+{
+  "resource_pack_name": "cursed_reaper",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "idex_cursed_reaper_scythe": {
+      "textures": "textures/items/cursed_reaper_scythe"
+    }
+  }
+}

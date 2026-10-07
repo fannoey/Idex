@@ -1,0 +1,54 @@
+{
+  "format_version": "1.10.0",
+  "particle_effect": {
+    "description": {
+      "identifier": "idex:reaper_aura",
+      "basic_render_parameters": {
+        "material": "particles_add",
+        "texture": "textures/particle/reaper/glow"
+      }
+    },
+    "components": {
+      "minecraft:emitter_rate_instant": {
+        "num_particles": "(variable.count > 0 ? variable.count : 4)"
+      },
+      "minecraft:emitter_lifetime_once": {
+        "active_time": 0.05
+      },
+      "minecraft:emitter_shape_disc": {
+        "radius": "(variable.radius > 0 ? variable.radius : 0.5)",
+        "plane_normal": "y"
+      },
+      "minecraft:particle_lifetime_expression": {
+        "max_lifetime": "math.random(0.6, 1.0)"
+      },
+      "minecraft:particle_initial_speed": 0.0,
+      "minecraft:particle_motion_dynamic": {
+        "linear_acceleration": [
+          0,
+          "math.random(1.2, 2.2) * (variable.rise > 0 ? variable.rise : 1)",
+          0
+        ],
+        "linear_drag_coefficient": 0.8
+      },
+      "minecraft:particle_appearance_billboard": {
+        "size": [
+          "math.random(0.08, 0.16) * (1 - v.particle_age / v.particle_lifetime)",
+          "math.random(0.08, 0.16) * (1 - v.particle_age / v.particle_lifetime)"
+        ],
+        "facing_camera_mode": "lookat_xyz"
+      },
+      "minecraft:particle_appearance_tinting": {
+        "color": {
+          "interpolant": "v.particle_age / v.particle_lifetime",
+          "gradient": {
+            "0.0": "#00FF2424",
+            "0.1": "#FFFF2424",
+            "0.5": "#FF35000A",
+            "1.0": "#0035000A"
+          }
+        }
+      }
+    }
+  }
+}

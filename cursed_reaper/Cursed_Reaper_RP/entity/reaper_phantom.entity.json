@@ -1,0 +1,29 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "idex:reaper_phantom",
+      "materials": {
+        "default": "entity_emissive_alpha"
+      },
+      "textures": {
+        "default": "textures/entity/reaper/phantom"
+      },
+      "geometry": {
+        "default": "geometry.idex.reaper_phantom"
+      },
+      "render_controllers": [
+        "controller.render.idex.reaper_fx"
+      ],
+      "animations": {
+        "idle": "animation.idex.phantom.idle"
+      },
+      "scripts": {
+        "animate": [
+          "idle"
+        ],
+        "scale": "q.property('idex:size')"
+      }
+    }
+  }
+}

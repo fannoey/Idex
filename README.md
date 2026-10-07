@@ -56,3 +56,9 @@ python3 tools/build_outfit.py
 - รองรับ Minecraft Bedrock 1.21.40 ขึ้นไป
 - โมเดลอิงสัดส่วนแขนแบบ classic (4 พิกเซล) ถ้าสกินแขนเล็ก (slim) แขนเสื้อจะหลวมขึ้นเล็กน้อย
 - ตอนถือไว้ในมือจะไม่แสดงโมเดล 3D (แสดงเฉพาะตอนสวมใส่)
+
+---
+
+# Cursed Reaper Scythe
+เคียวยมทูตต้องสาป: โมเดล poly mesh (`.bbmodel`) + สกิล 6 ท่าพร้อมอนิเมชั่น — ดูรายละเอียดที่ [`cursed_reaper/README.md`](cursed_reaper/README.md)
+ไฟล์ติดตั้ง: `dist/Cursed_Reaper_Scythe.mcaddon`
