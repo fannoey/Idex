@@ -1,0 +1,32 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Idex VV Lite",
+    "description": "Vibrant Visuals เบาสำหรับมือถือสเปคต่ำ\nNo caustics / no volumetric fog, warmer grading",
+    "uuid": "e0a664d6-5e52-56de-8105-84c27b0102c3",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      120
+    ]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "96d935d2-6ff7-55d8-921c-a0c470e696fc",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "capabilities": [
+    "pbr"
+  ]
+}
