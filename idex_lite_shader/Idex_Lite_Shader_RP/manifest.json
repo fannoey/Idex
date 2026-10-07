@@ -1,0 +1,29 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Idex Lite Shader",
+    "description": "แสงเงาเบา ๆ สำหรับมือถือสเปคต่ำ • ไม่กิน FPS\nSoft fog, glow sun/moon, clear water",
+    "uuid": "44728002-4a15-57b6-b4d8-e4998656cfe0",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      40
+    ]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "f0661e49-a355-5086-abfe-4421df0e64f7",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}

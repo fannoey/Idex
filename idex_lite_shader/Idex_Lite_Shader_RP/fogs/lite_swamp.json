@@ -1,0 +1,28 @@
+{
+  "format_version": "1.16.100",
+  "minecraft:fog_settings": {
+    "description": {
+      "identifier": "idex:lite_swamp"
+    },
+    "distance": {
+      "air": {
+        "fog_start": 0.55,
+        "fog_end": 1.0,
+        "fog_color": "#B4CDEB",
+        "render_distance_type": "render"
+      },
+      "weather": {
+        "fog_start": 0.18,
+        "fog_end": 0.75,
+        "fog_color": "#8D99A6",
+        "render_distance_type": "render"
+      },
+      "water": {
+        "fog_start": 0.0,
+        "fog_end": 14,
+        "fog_color": "#45603A",
+        "render_distance_type": "fixed"
+      }
+    }
+  }
+}

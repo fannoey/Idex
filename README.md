@@ -1,5 +1,7 @@
 # VLONE Outfit – Minecraft Bedrock Add-on
 
+> ในรีโปนี้ยังมี **Idex Lite Shader** แพ็คแสงเงาเบา ๆ สำหรับมือถือสเปคต่ำ → ดู [`idex_lite_shader/README.md`](idex_lite_shader/README.md) (ไฟล์ติดตั้ง `dist/Idex_Lite_Shader.mcpack`)
+
 ชุดเสื้อผ้า 3 ชิ้นสำหรับ Minecraft Bedrock (ใส่ได้จริงผ่านช่องเกราะ):
 
 | ไอเท็ม | ID | ช่องใส่ |
