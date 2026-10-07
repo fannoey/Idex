@@ -1,0 +1,72 @@
+{
+  "format_version": "1.10.0",
+  "particle_effect": {
+    "description": {
+      "identifier": "idex:reaper_mist",
+      "basic_render_parameters": {
+        "material": "particles_blend",
+        "texture": "textures/particle/reaper/smoke"
+      }
+    },
+    "components": {
+      "minecraft:emitter_rate_instant": {
+        "num_particles": "(variable.count > 0 ? variable.count : 6)"
+      },
+      "minecraft:emitter_lifetime_once": {
+        "active_time": 0.05
+      },
+      "minecraft:emitter_shape_disc": {
+        "radius": "(variable.radius > 0 ? variable.radius : 4)",
+        "plane_normal": "y"
+      },
+      "minecraft:particle_lifetime_expression": {
+        "max_lifetime": "math.random(2.5, 4.0)"
+      },
+      "minecraft:particle_initial_speed": 0.0,
+      "minecraft:particle_motion_dynamic": {
+        "linear_acceleration": [
+          "math.random(-0.2, 0.2)",
+          0.12,
+          "math.random(-0.2, 0.2)"
+        ],
+        "linear_drag_coefficient": 0.6
+      },
+      "minecraft:particle_appearance_billboard": {
+        "size": [
+          "math.random(1.6, 3.0) * (0.7 + 0.5 * v.particle_age / v.particle_lifetime)",
+          "math.random(1.6, 3.0) * (0.7 + 0.5 * v.particle_age / v.particle_lifetime)"
+        ],
+        "facing_camera_mode": "rotate_xyz",
+        "uv": {
+          "uv": {
+            "texture_width": 256,
+            "texture_height": 64,
+            "uv": [
+              "math.floor(v.particle_random_1 * 4) * 64",
+              0
+            ],
+            "uv_size": [
+              64,
+              64
+            ]
+          }
+        }
+      },
+      "minecraft:particle_initial_spin": {
+        "rotation": "math.random(0, 360)",
+        "rotation_rate": "math.random(-10, 10)"
+      },
+      "minecraft:particle_appearance_tinting": {
+        "color": {
+          "interpolant": "v.particle_age / v.particle_lifetime",
+          "gradient": {
+            "0.0": "#00080408",
+            "0.25": "#7A0A0408",
+            "0.75": "#6A140306",
+            "1.0": "#00100306"
+          }
+        }
+      }
+    }
+  }
+}
