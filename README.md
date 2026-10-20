@@ -56,3 +56,13 @@ python3 tools/build_outfit.py
 - รองรับ Minecraft Bedrock 1.21.40 ขึ้นไป
 - โมเดลอิงสัดส่วนแขนแบบ classic (4 พิกเซล) ถ้าสกินแขนเล็ก (slim) แขนเสื้อจะหลวมขึ้นเล็กน้อย
 - ตอนถือไว้ในมือจะไม่แสดงโมเดล 3D (แสดงเฉพาะตอนสวมใส่)
+
+---
+
+# Grim Reaper Scythe – Blockbench model
+
+โมเดลเคียวสีดำตามภาพอ้างอิง ไฟล์อยู่ใน `Output/`:
+- `Output/grim_reaper_scythe.bbmodel` เปิดด้วย Blockbench (Generic Model, Mesh)
+- `Output/textures/scythe_texture.png`, `Output/preview_*.png`, `Output/README.txt`
+
+สร้างใหม่ด้วย `python3 tools/build_scythe.py`
