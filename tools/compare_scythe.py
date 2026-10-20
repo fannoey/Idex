@@ -7,7 +7,8 @@ def on_white(path, h):
     bg = Image.new('RGBA', im.size, (255, 255, 255, 255)); bg.alpha_composite(im)
     bg = bg.convert('RGB')
     return bg.resize((round(bg.width * h / bg.height), h), Image.LANCZOS)
-ref = Image.open(REF).convert('RGB')
+_r = Image.open(REF).convert('RGBA')
+ref = Image.new('RGBA', _r.size, (255, 255, 255, 255)); ref.alpha_composite(_r); ref = ref.convert('RGB')
 # crop reference to its content bbox (same as autocrop)
 import numpy as np
 a = np.array(ref.convert('L')) < 200
